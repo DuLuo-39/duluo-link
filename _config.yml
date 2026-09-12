@@ -1,0 +1,58 @@
+# 网站信息：在这里更改名称、描述和作者。
+title: DuLuo 的个人博客
+subtitle: 记录生活，也记录思考。
+description: 一个用来分享生活、学习与思考的个人博客。
+author: DuLuo
+language: zh-CN
+timezone: Asia/Shanghai
+
+# 正式域名。开发服务器仍在 http://127.0.0.1:4000/ 预览。
+# Netlify 正式构建由 netlify.toml 固定使用此域名。
+url: https://duluo.link
+root: /
+permalink: posts/:title/
+pretty_urls:
+  trailing_index: false
+  trailing_html: true
+
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+skip_render: []
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: []
+filename_case: 1
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: false
+highlight:
+  enable: true
+  line_number: false
+  auto_detect: false
+  tab_replace: '  '
+prismjs:
+  enable: false
+
+index_generator:
+  path: ''
+  per_page: 6
+  order_by: -date
+archive_generator:
+  per_page: 20
+  yearly: true
+  monthly: false
+per_page: 6
+pagination_dir: page
+theme: journal
+sitemap:
+  path: sitemap.xml
+  tags: false
+  categories: false

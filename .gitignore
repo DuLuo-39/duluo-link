@@ -1,0 +1,12 @@
+node_modules/
+public/
+db.json
+.deploy_git/
+.netlify/
+.env
+.env.*
+!.env.example
+.npm-cache/
+*.log
+.DS_Store
+Thumbs.db

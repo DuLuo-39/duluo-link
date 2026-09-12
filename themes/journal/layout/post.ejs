@@ -1,0 +1,6 @@
+<article class="article">
+  <header class="article-header"><a class="back-link" href="<%= url_for('/') %>">← 所有文章</a><p class="eyebrow"><time datetime="<%= date(page.date, 'YYYY-MM-DD') %>"><%= date(page.date, 'YYYY 年 M 月 D 日') %></time></p><h1><%= page.title %></h1><p class="article-description"><%= page.description || '' %></p></header>
+  <div class="prose"><%- page.content %></div>
+  <footer class="article-bottom"><span>— 感谢阅读 —</span><a href="<%= url_for('/archives/') %>">浏览文章归档 ↗</a></footer>
+  <% if (page.prev || page.next) { %><nav class="post-navigation" aria-label="相邻文章"><% if (page.prev) { %><a href="<%= url_for(page.prev.path) %>">较新一篇<br><strong><%= page.prev.title %></strong></a><% } %><% if (page.next) { %><a href="<%= url_for(page.next.path) %>">较早一篇<br><strong><%= page.next.title %></strong></a><% } %></nav><% } %>
+</article>

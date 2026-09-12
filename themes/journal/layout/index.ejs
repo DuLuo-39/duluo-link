@@ -1,0 +1,20 @@
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow"><%= theme.eyebrow %></p>
+    <h1><%- theme.hero_title %></h1>
+    <p class="hero-description"><%- theme.hero_description %></p>
+    <a class="text-link" href="<%= url_for('/about/') %>">关于这个博客 <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="hero-aside" aria-hidden="true"><span class="vertical-note">把日子写成文字</span><span class="edition">PERSONAL<br>JOURNAL</span></div>
+</section>
+<section class="posts-section" aria-labelledby="recent-title">
+  <div class="section-heading"><h2 id="recent-title">最新记录<span class="small-english">RECENT NOTES</span></h2><span class="post-count"><%= site.posts.length %> 篇文章</span></div>
+  <% page.posts.each(function(post, index) { %>
+    <article class="post-row">
+      <div class="post-date"><time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY.MM.DD') %></time><span class="post-number">/ <%= String((page.current - 1) * config.index_generator.per_page + index + 1).padStart(2, '0') %></span></div>
+      <div class="post-summary"><h3><a href="<%= url_for(post.path) %>"><%= post.title %></a></h3><p><%= post.description || truncate(strip_html(post.excerpt || post.content), { length: 120 }) %></p><a class="read-link" href="<%= url_for(post.path) %>">阅读全文<span class="sr-only">：<%= post.title %></span> <span aria-hidden="true">↗</span></a></div>
+    </article>
+  <% }); %>
+  <% if (!page.posts.length) { %><p class="empty-state">第一篇记录，很快见。</p><% } %>
+  <% if (page.total > 1) { %><nav class="pagination" aria-label="文章分页"><%- paginator({ prev_text: '上一页', next_text: '下一页' }) %></nav><% } %>
+</section>
