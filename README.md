@@ -1,6 +1,6 @@
-# DuLuo 的个人博客
+# DuLuo 的小栈
 
-基于 Hexo 8 的中文个人博客，使用自带的 Journal 主题。GitHub 保存源码，Netlify 自动构建和发布，Cloudflare 管理域名 DNS。
+基于 Hexo 8 的中文个人技术博客，使用项目内的 Journal 主题。GitHub 保存源码，Netlify 构建和托管网页，Cloudflare 管理域名 DNS。
 
 正式网站已上线：[https://duluo.link](https://duluo.link)。源码已上传 GitHub，网站由 Netlify 托管，Cloudflare DNS 已接入；HTTP 和 `www.duluo.link` 均以 301 跳转到 `https://duluo.link/`。
 
@@ -19,7 +19,18 @@
 
 首页、文章、关于我、归档、CSS、图标和 sitemap 可访问；不存在的地址返回自定义 404 页面。HTTPS 校验正常，页面 canonical 和 sitemap 使用正式域名。本次核验通过公网及 GitHub 进行，Netlify 后台的仓库关联和自动构建触发设置仍需在控制台确认。
 
-目前包含首页、文章、归档、关于我和 404 页面。首页和个人介绍是可替换的初始文案，`source/_posts/hello-world.md` 是明确标注的排版示例。
+目前包含首页、文章、归档、分类、标签、关于我和 404 页面，以及站内搜索。`source/_posts/hello-world.md` 是明确标注的排版示例；`source/_posts/hexo-github-netlify-cloudflare.md` 是四个平台分工与日常更新流程的建站笔记。
+
+## 主题与阅读功能
+
+- 清透蓝白布局，首页使用《你的名字。》官方天空背景与诹访雫官方透明立绘；侧栏头像使用官网的雫笑脸原画。来源与权利信息见 `themes/journal/ASSETS.md` 和网站“关于我”。
+- 文章自动生成最多三级的目录、阅读时长和阅读进度。桌面目录跟随滚动，手机目录可折叠。
+- 代码块提供高亮、语言标识和复制按钮，复制时保留换行。浏览器拒绝剪贴板访问时，选中代码并提示手动复制。
+- 分类和标签页面随文章 front matter 自动生成，不需要手动建页面。
+- 站内搜索按需加载 `search.json`，支持中文、标题、正文和标签，多关键词以空格分隔。点击搜索或按 `Ctrl/⌘ K` 打开，按 `Esc` 关闭。
+- 搜索索引只使用 Hexo 发布集合，遵循草稿与未来文章配置，不依赖外部搜索服务。
+
+OP 表情画面尚未选定；当前头像来自角色页，不是 OP 截帧。
 
 ## 本地预览
 
@@ -37,7 +48,7 @@ npm run build
 npm run check
 ```
 
-构建结果位于 `public/`。检查会验证生成页面、内部链接、资源、基本元信息及 sitemap。
+构建结果位于 `public/`。检查会验证生成页面、内部链接、资源、基本元信息、目录锚点、搜索索引与 sitemap。
 
 ## 修改网站
 
@@ -48,6 +59,9 @@ npm run check
 | 关于我 | `source/about/index.md` |
 | 文章 | `source/_posts/*.md` |
 | 页面样式 | `themes/journal/source/css/style.css` |
+| 搜索、代码复制与目录交互 | `themes/journal/source/js/site.js` |
+| 分类标签生成、搜索索引与阅读时长 | `themes/journal/scripts/reading.js` |
+| 角色与背景素材 | `themes/journal/source/images/` |
 
 主题使用本地字体和资源，未配置第三方统计、评论服务或外部字体请求。当前 Netlify 会为线上页面注入平台工具条脚本，因此线上 HTML 比本地生成文件多出该脚本。
 
@@ -66,6 +80,10 @@ npm run new -- "my-first-post"
 title: 我的第一篇文章
 date: 2026-09-13 10:00:00
 description: 用一句话介绍这篇文章。
+categories:
+  - 技术笔记
+tags:
+  - Hexo
 ---
 
 开头段落。

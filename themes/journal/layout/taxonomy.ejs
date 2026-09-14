@@ -1,0 +1,4 @@
+<section class="directory-page"><header class="archive-header"><p class="eyebrow"><%= page.taxonomy_kind === 'category' ? 'EXPLORE BY TOPIC' : 'FOLLOW YOUR CURIOSITY' %></p><h1><%= page.title %></h1><p><%= page.description %></p></header>
+  <div class="term-grid"><% page.terms.forEach(function(term, index) { %><a class="term-card" href="<%= url_for(term.path) %>"><span class="term-number"><%= page.taxonomy_kind === 'tag' ? '#' : String(index + 1).padStart(2, '0') %></span><h2><%= term.name %></h2><span><%= term.posts.length %> 篇记录 <i aria-hidden="true">↗</i></span></a><% }); %></div>
+  <% if (!page.terms.length) { %><p class="empty-state">还没有<%= page.taxonomy_kind === 'category' ? '分类' : '标签' %>。第一篇记录，很快见。</p><% } %>
+</section>

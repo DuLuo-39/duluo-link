@@ -1,5 +1,8 @@
-# 首页文案，支持直接修改。
-eyebrow: 文字 · 生活 · 灵感
-hero_title: 给想法一个<br>慢慢生长的地方。
-hero_description: 把生活中的发现，和沿途的思考，<br>一篇一篇地记录下来。
-footer_note: 保持好奇，认真生活。
+# 首页文案。hero_title 和 hero_description 支持 HTML 换行。
+eyebrow: DULUO'S NOTEBOOK
+hero_title: 代码、日常，<br>还有热爱。
+hero_description: 在代码里探索，在故事里相遇。<br>记录每一个值得留下的瞬间。
+hero_image: /images/your-name-sky.webp
+hero_alt: 《你的名字。》官方原画中的天空与晚霞
+footer_note: 保持好奇，下一页见。
+github_url: https://github.com/DuLuo-39

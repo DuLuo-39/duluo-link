@@ -1,0 +1,6 @@
+<article class="post-card">
+  <div class="post-meta"><% if (post.categories.length) { const category = post.categories.toArray().at(-1); %><a class="category-label" href="<%= url_for(category.path) %>"><%= category.name %></a><% } else { %><span class="category-label">随手记录</span><% } %><time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY.MM.DD') %></time></div>
+  <h3><a href="<%= url_for(post.path) %>"><%= post.title %></a></h3>
+  <p><%= post.description || truncate(strip_html(post.excerpt || post.content), { length: 120 }) %></p>
+  <div class="post-card-bottom"><div class="post-tags"><% post.tags.each(function(tag) { %><a href="<%= url_for(tag.path) %>"># <%= tag.name %></a><% }); %></div><a class="read-link" href="<%= url_for(post.path) %>" aria-label="阅读全文：<%= post.title %>"><span><%= reading_minutes(post) %> 分钟阅读</span><span class="arrow" aria-hidden="true">↗</span></a></div>
+</article>

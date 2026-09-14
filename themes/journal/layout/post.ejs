@@ -1,6 +1,10 @@
-<article class="article">
-  <header class="article-header"><a class="back-link" href="<%= url_for('/') %>">← 所有文章</a><p class="eyebrow"><time datetime="<%= date(page.date, 'YYYY-MM-DD') %>"><%= date(page.date, 'YYYY 年 M 月 D 日') %></time></p><h1><%= page.title %></h1><p class="article-description"><%= page.description || '' %></p></header>
-  <div class="prose"><%- page.content %></div>
-  <footer class="article-bottom"><span>— 感谢阅读 —</span><a href="<%= url_for('/archives/') %>">浏览文章归档 ↗</a></footer>
-  <% if (page.prev || page.next) { %><nav class="post-navigation" aria-label="相邻文章"><% if (page.prev) { %><a href="<%= url_for(page.prev.path) %>">较新一篇<br><strong><%= page.prev.title %></strong></a><% } %><% if (page.next) { %><a href="<%= url_for(page.next.path) %>">较早一篇<br><strong><%= page.next.title %></strong></a><% } %></nav><% } %>
-</article>
+<div class="reading-layout">
+  <article class="article post-article">
+    <header class="article-header"><a class="back-link" href="<%= url_for('/') %>">← 回到小栈</a><div class="post-meta"><% page.categories.each(function(category) { %><a class="category-label" href="<%= url_for(category.path) %>"><%= category.name %></a><% }); %><time datetime="<%= date(page.date, 'YYYY-MM-DD') %>"><%= date(page.date, 'YYYY.MM.DD') %></time><span>约 <%= reading_minutes(page) %> 分钟</span></div><h1><%= page.title %></h1><% if (page.description) { %><p class="article-description"><%= page.description %></p><% } %></header>
+    <div class="prose" data-article-content><%- page.content %></div>
+    <footer class="article-bottom"><div class="tag-list"><% page.tags.each(function(tag) { %><a href="<%= url_for(tag.path) %>"># <%= tag.name %></a><% }); %></div><p>写到这里，感谢相遇。<span aria-hidden="true">✦</span></p></footer>
+    <% if (page.prev || page.next) { %><nav class="post-navigation" aria-label="相邻文章"><% if (page.prev) { %><a href="<%= url_for(page.prev.path) %>"><span>← 较新一篇</span><strong><%= page.prev.title %></strong></a><% } %><% if (page.next) { %><a href="<%= url_for(page.next.path) %>"><span>较早一篇 →</span><strong><%= page.next.title %></strong></a><% } %></nav><% } %>
+  </article>
+  <% const contents = toc(page.content, { list_number: false, max_depth: 3 }); %>
+  <aside class="reading-sidebar" aria-label="文章导航"><details class="toc-panel" open><summary>本篇目录 <span aria-hidden="true">⌄</span></summary><nav class="toc-content" aria-label="文章目录"><%- contents || '<p class="muted">这是一篇短笔记，直接开始阅读吧。</p>' %></nav></details><a class="back-to-top" href="#main">回到顶部 ↑</a></aside>
+</div>

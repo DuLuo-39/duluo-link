@@ -1,20 +1,36 @@
-<section class="hero">
-  <div class="hero-copy">
-    <p class="eyebrow"><%= theme.eyebrow %></p>
-    <h1><%- theme.hero_title %></h1>
-    <p class="hero-description"><%- theme.hero_description %></p>
-    <a class="text-link" href="<%= url_for('/about/') %>">关于这个博客 <span aria-hidden="true">↗</span></a>
+<section class="hero" aria-labelledby="welcome-title">
+  <img class="hero-image" src="<%= url_for(theme.hero_image) %>" alt="<%= theme.hero_alt %>" width="1900" height="1350" fetchpriority="high">
+  <div class="hero-shade" aria-hidden="true"></div>
+  <div class="hero-characters">
+    <span class="character-disc" aria-hidden="true"></span>
+    <img class="hero-character character-shizuku" src="<%= url_for('/images/shizuku.png') %>" alt="诹访雫，《擅长逃跑的殿下》官方立绘" width="800" height="1400">
+    <span class="character-label" aria-hidden="true">雫 <small>SHIZUKU</small></span>
   </div>
-  <div class="hero-aside" aria-hidden="true"><span class="vertical-note">把日子写成文字</span><span class="edition">PERSONAL<br>JOURNAL</span></div>
+  <div class="hero-copy">
+    <p class="eyebrow"><span class="tiny-star" aria-hidden="true">✦</span><%= theme.eyebrow %></p>
+    <h1 id="welcome-title"><%- theme.hero_title %></h1>
+    <p class="hero-description"><%- theme.hero_description %></p>
+    <a class="primary-link" href="#recent-title">开始阅读 <span aria-hidden="true">↓</span></a>
+  </div>
+  <a class="hero-caption" href="<%= url_for('/about/#visual-credits') %>">原画来源 ↗</a>
 </section>
-<section class="posts-section" aria-labelledby="recent-title">
-  <div class="section-heading"><h2 id="recent-title">最新记录<span class="small-english">RECENT NOTES</span></h2><span class="post-count"><%= site.posts.length %> 篇文章</span></div>
-  <% page.posts.each(function(post, index) { %>
-    <article class="post-row">
-      <div class="post-date"><time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY.MM.DD') %></time><span class="post-number">/ <%= String((page.current - 1) * config.index_generator.per_page + index + 1).padStart(2, '0') %></span></div>
-      <div class="post-summary"><h3><a href="<%= url_for(post.path) %>"><%= post.title %></a></h3><p><%= post.description || truncate(strip_html(post.excerpt || post.content), { length: 120 }) %></p><a class="read-link" href="<%= url_for(post.path) %>">阅读全文<span class="sr-only">：<%= post.title %></span> <span aria-hidden="true">↗</span></a></div>
-    </article>
-  <% }); %>
-  <% if (!page.posts.length) { %><p class="empty-state">第一篇记录，很快见。</p><% } %>
-  <% if (page.total > 1) { %><nav class="pagination" aria-label="文章分页"><%- paginator({ prev_text: '上一页', next_text: '下一页' }) %></nav><% } %>
-</section>
+<div class="home-columns">
+  <section class="posts-section" aria-labelledby="recent-title">
+    <div class="section-heading"><h2 id="recent-title">最近更新 <span class="small-english">LATEST NOTES</span></h2><a href="<%= url_for('/archives/') %>">全部文章 <span aria-hidden="true">↗</span></a></div>
+    <div class="post-list"><% page.posts.each(function(post) { %><%- partial('_post-card', { post }) %><% }); %></div>
+    <% if (!page.posts.length) { %><p class="empty-state">故事正要开始，第一篇笔记很快见。</p><% } %>
+    <% if (page.total > 1) { %><nav class="pagination" aria-label="文章分页"><%- paginator({ prev_text: '上一页', next_text: '下一页' }) %></nav><% } %>
+  </section>
+  <aside class="home-sidebar" aria-label="博主与文章导航">
+    <section class="profile-panel">
+      <div class="profile-cover" aria-hidden="true"><span>HELLO, WORLD_</span><i>✦</i></div>
+      <img class="profile-avatar" src="<%= url_for('/images/shizuku-smile.png') %>" alt="微笑的雫" width="270" height="270" loading="lazy">
+      <h2>嗨，我是 <%= config.author %></h2>
+      <p>写一点代码，存一些想法。<br>喜欢二次元，也热爱探索。</p>
+      <div class="profile-stats"><a href="<%= url_for('/archives/') %>"><strong><%= site.posts.length %></strong><span>文章</span></a><a href="<%= url_for('/categories/') %>"><strong><%= site.categories.filter(term => term.posts.length > 0).length %></strong><span>分类</span></a><a href="<%= url_for('/tags/') %>"><strong><%= site.tags.filter(term => term.posts.length > 0).length %></strong><span>标签</span></a></div>
+      <a class="profile-github" href="<%= theme.github_url %>" target="_blank" rel="noopener noreferrer">在 GitHub 找到我 <span aria-hidden="true">↗</span></a>
+    </section>
+    <section class="sidebar-topics"><h2><span aria-hidden="true">#</span> 沿着兴趣探索</h2><div class="tag-list"><% site.tags.sort('name', 1).toArray().filter(tag => tag.posts.length > 0).slice(0, 12).forEach(function(tag) { %><a href="<%= url_for(tag.path) %>"><%= tag.name %></a><% }); %><% if (!site.tags.length) { %><span class="muted">新的关键词，正在路上。</span><% } %></div></section>
+    <p class="side-note"><span aria-hidden="true">✦</span> 把学到的写下来，<br>让每一步都有迹可循。</p>
+  </aside>
+</div>

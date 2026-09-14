@@ -3,7 +3,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 
 const output = path.resolve('public');
-const required = ['index.html', 'about/index.html', 'archives/index.html', '404.html', 'css/style.css', 'favicon.svg', 'sitemap.xml'];
+const required = ['index.html', 'about/index.html', 'archives/index.html', 'categories/index.html', 'tags/index.html', '404.html', 'css/style.css', 'js/site.js', 'search.json', 'favicon.svg', 'sitemap.xml'];
 for (const file of required) assert.ok(fs.existsSync(path.join(output, file)), `Missing output: ${file}`);
 
 function walk(directory) {
@@ -41,4 +41,23 @@ for (const file of pages) {
 const sitemap = fs.readFileSync(path.join(output, 'sitemap.xml'), 'utf8');
 assert.match(sitemap, /<urlset\b/, 'Invalid sitemap');
 assert.ok(!sitemap.includes('/404.html'), '404 page should not be listed in the sitemap');
-console.log(`Verified ${pages.length} HTML pages, internal links, assets, metadata and sitemap.`);
+const index = JSON.parse(fs.readFileSync(path.join(output, 'search.json'), 'utf8'));
+assert.ok(Array.isArray(index), 'Search index must be an array');
+const postPages = pages.filter(file => path.relative(output, file).split(path.sep)[0] === 'posts');
+assert.equal(index.length, postPages.length, 'Search must index every published article exactly once');
+assert.equal(new Set(index.map(post => post.url)).size, index.length, 'Duplicate search results');
+for (const post of index) {
+  assert.ok(post.title && typeof post.text === 'string', 'Search article needs a title and text');
+  assert.ok(Array.isArray(post.tags) && Array.isArray(post.categories), 'Search needs taxonomy labels');
+  const target = new URL(post.url, origin);
+  assert.equal(target.origin, origin, 'Search result must stay on this website');
+  assert.ok(fs.existsSync(path.join(output, decodeURIComponent(target.pathname), 'index.html')), `Broken search result: ${post.url}`);
+}
+for (const file of postPages) {
+  const html = fs.readFileSync(file, 'utf8');
+  for (const match of html.matchAll(/class="toc-link" href="#([^"]+)"/g)) {
+    const id = decodeURIComponent(match[1]);
+    assert.ok(html.includes(`id="${id}"`), `${path.relative(output, file)}: broken TOC target ${id}`);
+  }
+}
+console.log(`Verified ${pages.length} HTML pages, ${index.length} searchable articles, TOC targets, internal links, assets, metadata and sitemap.`);
