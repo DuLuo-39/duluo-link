@@ -2,7 +2,22 @@
 
 基于 Hexo 8 的中文个人博客，使用自带的 Journal 主题。GitHub 保存源码，Netlify 自动构建和发布，Cloudflare 管理域名 DNS。
 
-正式域名：`duluo.link`，已在 Cloudflare 注册。代码中的正式网址已配置为 `https://duluo.link`；GitHub 上传、Netlify 部署、域名绑定和 HTTPS 验证仍需完成。部署后将 `duluo.link` 设为 Netlify 主域名，让 `www.duluo.link` 自动跳转到主域名。
+正式网站已上线：[https://duluo.link](https://duluo.link)。源码已上传 GitHub，网站由 Netlify 托管，Cloudflare DNS 已接入；HTTP 和 `www.duluo.link` 均以 301 跳转到 `https://duluo.link/`。
+
+## 当前状态（2026-09-14 核验）
+
+| 项目 | 当前配置 |
+| --- | --- |
+| GitHub 仓库 | [DuLuo-39/duluo-link](https://github.com/DuLuo-39/duluo-link) |
+| 本地分支 / 远程分支 | `main` / `origin/main` |
+| 正式网站 | [duluo.link](https://duluo.link) |
+| Netlify 地址 | [luminous-chebakia-ff0a63.netlify.app](https://luminous-chebakia-ff0a63.netlify.app) |
+| Netlify 团队 | [duluo-39](https://app.netlify.com/teams/duluo-39/projects) |
+| Netlify Site ID | `16572910-7b2f-4ef4-b146-08fd038bfdec` |
+| Cloudflare nameservers | `josh.ns.cloudflare.com`、`norah.ns.cloudflare.com` |
+| `www` DNS | CNAME → `luminous-chebakia-ff0a63.netlify.app` |
+
+首页、文章、关于我、归档、CSS、图标和 sitemap 可访问；不存在的地址返回自定义 404 页面。HTTPS 校验正常，页面 canonical 和 sitemap 使用正式域名。本次核验通过公网及 GitHub 进行，Netlify 后台的仓库关联和自动构建触发设置仍需在控制台确认。
 
 目前包含首页、文章、归档、关于我和 404 页面。首页和个人介绍是可替换的初始文案，`source/_posts/hello-world.md` 是明确标注的排版示例。
 
@@ -34,7 +49,7 @@ npm run check
 | 文章 | `source/_posts/*.md` |
 | 页面样式 | `themes/journal/source/css/style.css` |
 
-网站使用本地字体和资源，没有第三方统计、评论服务或外部字体请求。
+主题使用本地字体和资源，未配置第三方统计、评论服务或外部字体请求。当前 Netlify 会为线上页面注入平台工具条脚本，因此线上 HTML 比本地生成文件多出该脚本。
 
 ## 写文章
 
@@ -75,37 +90,46 @@ npx hexo publish "my-next-post"
 
 ## GitHub → Netlify
 
-1. 在 GitHub 创建一个空仓库（建议私有，例如 `personal-web`）。
-2. 提交本项目的源码和 `package-lock.json`，并推送到仓库。`node_modules/`、`public/`、`.env` 和缓存已被忽略。
-3. 注册并登录 Netlify，选择 **Add new project → Import an existing project → GitHub**。
-4. 连接刚才的仓库，GitHub 授权时只选择这个仓库即可。
-5. 选择要发布的分支。仓库里的 `netlify.toml` 已配置：
-   - Build command: `npm run build && npm run check`
-   - Publish directory: `public`
-   - Node.js: `24`
-6. 部署完成后，访问 Netlify 分配的 `https://站点名称.netlify.app`。之后每次向生产分支推送修改，Netlify 都会自动重新发布。
+仓库和 Netlify 项目已存在，后续沿用它们。`netlify.toml` 中的构建设置为：
+
+- Build command: `npm run build && npm run check`
+- Publish directory: `public`
+- Node.js: `24`
+- 正式环境网址：`SITE_URL=https://duluo.link`
+
+更新文章或主题后，在本地预览并检查，再提交到 `main`：
+
+```sh
+npm run build
+npm run check
+git status
+git add <本次修改的文件>
+git commit -m "描述本次更新"
+git push origin main
+```
+
+`node_modules/`、`public/`、`.env` 和缓存已被忽略。提交源码和依赖锁文件，Netlify 的发布目录始终是构建生成的 `public/`。
+
+在 Netlify 项目的持续部署设置中确认关联仓库为 `DuLuo-39/duluo-link`、生产分支为 `main`。确认关联后，向生产分支推送会触发新部署；在部署记录中核对对应的 Git 提交和成功状态，再检查正式网站。仅凭网页可以访问，不能证明自动构建关联已经配置。
 
 无需开启 GitHub Pages，也无需配置 `hexo deploy`。构建脚本使用 `netlify.toml` 中的生产环境 `SITE_URL=https://duluo.link` 生成正式页面的绝对链接和 sitemap；部署预览使用 `DEPLOY_PRIME_URL`，并添加禁止搜索引擎收录的页面标记。
 
-首次发布前，替换示例文章，确认网站名称、作者、关于我和需要公开的内容。
+线上目前仍保留示例文章和待完善的个人介绍，后续可直接替换为正式内容。
 
 ## 接入 duluo.link
 
-域名已在 Cloudflare 购买，下一步是创建 Netlify 项目并添加域名：
+域名绑定已完成，主域名为 `duluo.link`，`www.duluo.link` 会跳转到主域名。当前公共 DNS 中，根域返回 Netlify 地址 `75.2.60.5` 和 `99.83.231.61`，`www` 返回上述 Netlify 站点的 CNAME。
 
-1. 在 Netlify 成功部署网站，记下它实际分配的 `*.netlify.app` 地址。
-2. 在 Netlify **Domain management** 添加 `duluo.link` 和 `www.duluo.link`，将 `duluo.link` 设为主域名，按该项目实际显示的说明配置 DNS。
-3. 标准 Netlify 配置通常如下（若控制台给出项目专属目标，以控制台为准）：
+以下保留为迁移或排障时的标准配置参考，具体以 Netlify 项目的域名验证指引为准：
 
 | 类型 | 名称 | 目标 | Cloudflare 代理 |
 | --- | --- | --- | --- |
 | CNAME | `@` | `apex-loadbalancer.netlify.com` | DNS only，灰云 |
-| CNAME | `www` | 你的站点名称.netlify.app | DNS only，灰云 |
+| CNAME | `www` | `luminous-chebakia-ff0a63.netlify.app` | DNS only，灰云 |
 
 Cloudflare 支持根域 CNAME flattening。不要给同一名称同时添加冲突的 A、AAAA 或 CNAME 记录。
 
-4. 在 Netlify 确认证书签发和 HTTPS 生效。
-5. `SITE_URL=https://duluo.link` 已写入 `netlify.toml`，`_config.yml` 也已同步。绑定完成后验证首页、文章及 `www` 到主域名的跳转。
+`SITE_URL=https://duluo.link` 已写入 `netlify.toml`，`_config.yml` 也已同步。若以后更换主域名，应同时更新这两处，重新部署并检查 canonical、sitemap 和域名跳转。
 
 默认让 Cloudflare 管理 DNS，Netlify 提供 HTTPS 与 CDN。灰云模式不需要配置 Cloudflare SSL/TLS 模式。若之后确实需要 Cloudflare 橙云代理能力，再单独评估缓存、证书和回源设置。
 
