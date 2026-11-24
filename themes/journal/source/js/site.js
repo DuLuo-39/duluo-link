@@ -227,7 +227,7 @@
     const original = surface.textContent;
     button.addEventListener('click', async () => {
       const value = button.getAttribute('data-copy-value') || '';
-      const status = button.parentElement.querySelector('[data-copy-status]') || button.querySelector('[data-copy-status]');
+      const status = button.querySelector('[data-copy-status]') || (button.parentElement && button.parentElement.querySelector('[data-copy-status]'));
       const text = button.parentElement.querySelector('.social-text');
       clearTimeout(timer);
       try {

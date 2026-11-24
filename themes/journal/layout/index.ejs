@@ -34,7 +34,7 @@
       <h2 id="music-title" class="widget-label"><%- journal_icon('music') %> 桌面 BGM</h2>
       <% if (!published.length) { %>
       <p class="music-empty">还没有放入音频。</p>
-      <p class="muted">把轻量音频放进 <code>source/audio/</code>，再写进主题配置的 <code>music.tracks</code>。</p>
+      <p class="muted">桌边还安静着，想听的曲子以后再放进来。</p>
       <% } else { %>
       <p class="music-track" data-music-title><%= published[0].title %></p>
       <p class="music-artist" data-music-artist><%= published[0].artist || '未署名' %></p>

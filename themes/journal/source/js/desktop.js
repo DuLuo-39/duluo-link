@@ -143,6 +143,7 @@
       const currentTime = player.querySelector('[data-music-current]');
       const totalTime = player.querySelector('[data-music-duration]');
       const error = player.querySelector('[data-music-error]');
+      let seeking = false;
       function setPlaying(playing) {
         toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
         toggle.setAttribute('aria-label', playing ? '暂停' : '播放');
@@ -173,7 +174,7 @@
       next.addEventListener('click', () => { if (!next.disabled) showTrack(nextTrackIndex(index, tracks.length, 1), !audio.paused); });
       audio.addEventListener('timeupdate', () => {
         currentTime.textContent = formatDuration(audio.currentTime);
-        if (Number.isFinite(audio.duration) && audio.duration > 0 && document.activeElement !== progress) progress.value = String(Math.round(audio.currentTime / audio.duration * 1000));
+        if (!seeking && Number.isFinite(audio.duration) && audio.duration > 0) progress.value = String(Math.round(audio.currentTime / audio.duration * 1000));
       });
       audio.addEventListener('loadedmetadata', () => { totalTime.textContent = formatDuration(audio.duration); });
       audio.addEventListener('ended', () => {
@@ -181,7 +182,13 @@
         else setPlaying(false);
       });
       audio.addEventListener('error', showError);
+      progress.addEventListener('blur', () => { seeking = false; });
+      progress.addEventListener('pointerdown', () => { seeking = true; });
+      progress.addEventListener('pointerup', () => { seeking = false; });
+      progress.addEventListener('pointercancel', () => { seeking = false; });
+      progress.addEventListener('change', () => { seeking = false; });
       progress.addEventListener('input', () => {
+        seeking = true;
         if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = audio.duration * Number(progress.value) / 1000;
       });
     }

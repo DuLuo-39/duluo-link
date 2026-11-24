@@ -31,7 +31,7 @@
   <a class="skip-link" href="#main">跳到正文</a>
   <header class="site-header">
     <div class="wrapper header-inner">
-      <a class="brand" href="<%= url_for('/') %>" aria-label="<%= config.title %>首页"><span class="brand-mark" aria-hidden="true">D<span>·</span></span><span>DuLuo<span class="brand-note">的小栈</span></span></a>
+      <a class="brand" href="<%= url_for('/') %>" aria-label="<%= config.title %>首页"><span class="brand-mark<%= theme.avatar ? ' has-avatar' : '' %>" aria-hidden="true"><% if (theme.avatar) { %><img class="brand-avatar" src="<%= url_for(theme.avatar) %>" alt=""><% } else { %>D<span>·</span><% } %></span><span>DuLuo<span class="brand-note">的小栈</span></span></a>
       <p class="nav-label">MY NOTEBOOK</p>
       <% const readingNow = is_archive() || is_post() || page.taxonomy_kind === 'category' || page.taxonomy_kind === 'tag'; %>
       <nav aria-label="主导航">

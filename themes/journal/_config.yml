@@ -35,6 +35,10 @@ artwork:
   source_url: https://www.pixiv.net/artworks/141188192
   artist_url: https://www.pixiv.net/users/90015209
 
+# 可选头像。把图片放到 themes/journal/source/images/avatar.webp，
+# 这里写成 /images/avatar.webp 即可。留空则继续显示字母徽章。
+avatar: ''
+
 # 使用十六进制颜色；由主题统一生成 CSS 变量。
 palette:
   accent: '#78619c'
