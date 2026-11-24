@@ -222,14 +222,17 @@
 
   document.querySelectorAll('[data-copy-value]').forEach(button => {
     let timer;
+    const label = button.querySelector('[data-copy-label]');
+    const surface = label || button;
+    const original = surface.textContent;
     button.addEventListener('click', async () => {
       const value = button.getAttribute('data-copy-value') || '';
-      const status = button.parentElement.querySelector('[data-copy-status]');
+      const status = button.parentElement.querySelector('[data-copy-status]') || button.querySelector('[data-copy-status]');
       const text = button.parentElement.querySelector('.social-text');
       clearTimeout(timer);
       try {
         await navigator.clipboard.writeText(value);
-        button.textContent = '已复制';
+        surface.textContent = '已复制';
         if (status) status.textContent = '已复制到剪贴板';
       } catch {
         if (text) {
@@ -239,11 +242,11 @@
           selection.removeAllRanges();
           selection.addRange(range);
         }
-        button.textContent = '请手动复制';
-        if (status) status.textContent = '无法自动复制，内容已选中，请按 Ctrl 或 Command 加 C';
+        surface.textContent = label ? `${original}: ${value}` : '请手动复制';
+        if (status) status.textContent = `无法自动复制，请手动复制 ${label ? original + ': ' + value : value}`;
       }
       timer = setTimeout(() => {
-        button.textContent = '复制';
+        surface.textContent = original;
         if (status) status.textContent = '';
       }, 2500);
     });

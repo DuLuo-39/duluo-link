@@ -24,8 +24,21 @@
     const choices = alternatives.length ? alternatives : posts;
     return choices.length ? choices[Math.min(choices.length - 1, Math.floor(random() * choices.length))] : null;
   }
+  function formatDuration(seconds) {
+    const value = Number(seconds);
+    if (!Number.isFinite(value) || value < 0) return '00:00';
+    const total = Math.floor(value);
+    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+  }
+  function nextTrackIndex(current, total, step) {
+    const count = Math.floor(Number(total));
+    if (!Number.isFinite(count) || count <= 0) return 0;
+    const index = Number.isFinite(Number(current)) ? Math.trunc(Number(current)) : 0;
+    const delta = Number.isFinite(Number(step)) ? Math.trunc(Number(step)) : 0;
+    return ((index + delta) % count + count) % count;
+  }
   // Export the date and selection logic for boundary tests without a browser clock override.
-  if (typeof module === 'object' && module.exports) module.exports = { beijingTime, greeting, calendarDays, pickPost };
+  if (typeof module === 'object' && module.exports) module.exports = { beijingTime, greeting, calendarDays, pickPost, formatDuration, nextTrackIndex };
   if (typeof document === 'undefined') return;
 
   const clock = document.querySelector('[data-clock]');
@@ -111,5 +124,104 @@
       }, { rootMargin: '200px' });
       observer.observe(card);
     } else loadRecommendations();
+  }
+
+  const player = document.querySelector('[data-music-player]');
+  const audio = player && player.querySelector('[data-music-audio]');
+  if (player && audio) {
+    let tracks = [];
+    try { tracks = JSON.parse(player.querySelector('[data-music-tracks]').textContent || '[]'); }
+    catch { tracks = []; }
+    if (tracks.length) {
+      let index = 0;
+      const title = player.querySelector('[data-music-title]');
+      const artist = player.querySelector('[data-music-artist]');
+      const toggle = player.querySelector('[data-music-toggle]');
+      const previous = player.querySelector('[data-music-prev]');
+      const next = player.querySelector('[data-music-next]');
+      const progress = player.querySelector('[data-music-progress]');
+      const currentTime = player.querySelector('[data-music-current]');
+      const totalTime = player.querySelector('[data-music-duration]');
+      const error = player.querySelector('[data-music-error]');
+      function setPlaying(playing) {
+        toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
+        toggle.setAttribute('aria-label', playing ? '暂停' : '播放');
+        toggle.textContent = playing ? '暂停' : '播放';
+      }
+      function showError() {
+        if (error) error.hidden = false;
+        setPlaying(false);
+      }
+      function showTrack(nextIndex, shouldPlay) {
+        index = nextTrackIndex(nextIndex, tracks.length, 0);
+        const track = tracks[index];
+        if (error) error.hidden = true;
+        title.textContent = track.title;
+        artist.textContent = track.artist || '未署名';
+        progress.value = '0';
+        currentTime.textContent = '00:00';
+        totalTime.textContent = '00:00';
+        audio.src = track.src;
+        if (!shouldPlay) { setPlaying(false); return; }
+        audio.play().then(() => setPlaying(true)).catch(showError);
+      }
+      toggle.addEventListener('click', () => {
+        if (audio.paused) audio.play().then(() => setPlaying(true)).catch(showError);
+        else { audio.pause(); setPlaying(false); }
+      });
+      previous.addEventListener('click', () => { if (!previous.disabled) showTrack(nextTrackIndex(index, tracks.length, -1), !audio.paused); });
+      next.addEventListener('click', () => { if (!next.disabled) showTrack(nextTrackIndex(index, tracks.length, 1), !audio.paused); });
+      audio.addEventListener('timeupdate', () => {
+        currentTime.textContent = formatDuration(audio.currentTime);
+        if (Number.isFinite(audio.duration) && audio.duration > 0 && document.activeElement !== progress) progress.value = String(Math.round(audio.currentTime / audio.duration * 1000));
+      });
+      audio.addEventListener('loadedmetadata', () => { totalTime.textContent = formatDuration(audio.duration); });
+      audio.addEventListener('ended', () => {
+        if (tracks.length > 1) showTrack(nextTrackIndex(index, tracks.length, 1), true);
+        else setPlaying(false);
+      });
+      audio.addEventListener('error', showError);
+      progress.addEventListener('input', () => {
+        if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = audio.duration * Number(progress.value) / 1000;
+      });
+    }
+  }
+
+  const artwork = document.querySelector('[data-artwork-switch]');
+  if (artwork) {
+    let pieces = [];
+    try { pieces = JSON.parse(artwork.querySelector('[data-artwork-data]').textContent || '[]'); }
+    catch { pieces = []; }
+    if (pieces.length > 1) {
+      let index = 0;
+      const image = artwork.querySelector('[data-artwork-image]');
+      const source = artwork.querySelector('[data-artwork-source]');
+      const name = artwork.querySelector('[data-artwork-name]');
+      const character = artwork.querySelector('[data-artwork-character]');
+      const series = artwork.querySelector('[data-artwork-series]');
+      const artist = artwork.querySelector('[data-artwork-artist]');
+      const counter = artwork.querySelector('[data-artwork-index]');
+      function showArtwork(nextIndex) {
+        const count = pieces.length;
+        index = ((nextIndex % count) + count) % count;
+        const item = pieces[index];
+        image.src = item.image;
+        image.alt = item.alt || item.title || '';
+        if (item.width) image.width = item.width;
+        if (item.height) image.height = item.height;
+        source.href = item.source_url || item.image;
+        source.setAttribute('aria-label', `查看《${item.title || item.character || '插画'}》原作`);
+        name.textContent = item.name_en || '';
+        character.textContent = item.character || '';
+        series.textContent = item.series || '鸣潮';
+        artist.href = item.source_url || item.image;
+        artist.textContent = `Illustration by ${item.artist || ''} ↗`;
+        counter.textContent = `${index + 1} / ${count}`;
+      }
+      artwork.addEventListener('click', event => {
+        if (event.target.closest('[data-artwork-prev]')) showArtwork(index - 1);
+        if (event.target.closest('[data-artwork-next]')) showArtwork(index + 1);
+      });
+    }
   }
 })();

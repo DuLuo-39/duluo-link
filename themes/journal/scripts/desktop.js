@@ -70,8 +70,44 @@ function renderSocials(theme) {
   return `<ul class="social-list">${rows.join('')}</ul>`;
 }
 
+function renderSocialBar(theme) {
+  const items = socialEntries(theme);
+  if (!items.length) return '';
+  const chips = items.map(item => {
+    const icon = iconSvg(item.key);
+    const label = escapeHtml(item.label);
+    if (item.url) {
+      const external = /^https?:\/\//i.test(item.url) ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a class="social-chip" href="${escapeHtml(item.url)}"${external}>${icon}<span>${label}</span></a>`;
+    }
+    const value = escapeHtml(item.copy);
+    return `<button class="social-chip" type="button" data-copy-value="${value}" aria-label="复制${label}：${value}">${icon}<span data-copy-label>${label}</span><span class="sr-only" role="status" data-copy-status></span></button>`;
+  });
+  return `<div class="social-bar">${chips.join('')}</div>`;
+}
+
+function musicTracks(theme) {
+  const tracks = Array.isArray(theme?.music?.tracks) ? theme.music.tracks : [];
+  return tracks.flatMap(track => {
+    if (!track || typeof track !== 'object') return [];
+    const title = plain(track.title);
+    const src = plain(track.src);
+    const local = src.startsWith('/') && !src.startsWith('//');
+    if (!title || (!local && !/^https?:\/\//i.test(src))) return [];
+    return [{ title, artist: plain(track.artist), src }];
+  });
+}
+
 hexo.extend.helper.register('journal_socials', function () {
   return renderSocials(this.theme);
+});
+
+hexo.extend.helper.register('journal_social_bar', function () {
+  return renderSocialBar(this.theme);
+});
+
+hexo.extend.helper.register('journal_music_tracks', function () {
+  return musicTracks(this.theme);
 });
 
 hexo.extend.helper.register('journal_github_url', function () {

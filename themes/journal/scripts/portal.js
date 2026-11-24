@@ -1,5 +1,7 @@
 'use strict';
 
+const { normalizeGallery, featuredArtworks } = require('../source/js/gallery.js');
+
 function text(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -122,6 +124,13 @@ hexo.extend.generator.register('journal-portal', function () {
         eyebrow: 'BLOGROLL',
         description: '值得反复翻阅的独立博客与灵感站点。'
       }, normalizeBlogger)
-    }
+    },
+    { path: 'gallery/index.html', layout: 'gallery', data: normalizeGallery(data.gallery, this.theme.config.artwork) }
   ];
+});
+
+hexo.extend.helper.register('journal_featured_artworks', function () {
+  const stored = this.site && this.site.data ? this.site.data.gallery : undefined;
+  const gallery = normalizeGallery(stored, this.theme && this.theme.artwork);
+  return featuredArtworks(gallery.items, this.theme && this.theme.artwork);
 });

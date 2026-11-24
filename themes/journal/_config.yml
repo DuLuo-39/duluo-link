@@ -49,3 +49,14 @@ widgets:
   clock: true
   calendar: true
   random_post: true
+  music: true
+
+# 本地背景音乐。把轻量 mp3 或 m4a 放进 source/audio/，单首建议压到 2~4 MB，
+# 再按下面的形状登记。tracks 保持为空时，首页只显示空态，不会请求音频。
+# music:
+#   tracks:
+#     - title: 夜航
+#       artist: DuLuo
+#       src: /audio/night.mp3
+music:
+  tracks: []

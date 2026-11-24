@@ -1,28 +1,58 @@
-<% const widgets = theme.widgets || {}; const art = theme.artwork; %>
+<% const widgets = theme.widgets || {}; const arts = journal_featured_artworks().map(item => Object.assign({}, item, { image: /^https?:\/\//i.test(item.image) ? item.image : url_for(item.image) })); const art = arts[0]; %>
 <div class="desktop-heading"><p class="eyebrow"><span class="tiny-star" aria-hidden="true">✦</span> MY LITTLE CORNER OF THE INTERNET</p><a href="#recent-title">去读一篇文章 <span aria-hidden="true">↗</span></a></div>
 <div class="desktop-grid">
   <section class="welcome-stack" aria-labelledby="welcome-title">
-    <figure class="artwork-card glass">
+    <% if (art) { %>
+    <figure class="artwork-card glass" data-artwork<% if (arts.length > 1) { %> data-artwork-switch<% } %>>
       <div class="artwork-mat">
-        <span class="artwork-lettering" aria-hidden="true"><%= art.name_en %><span>✦</span></span>
-        <a class="artwork-link" href="<%= art.source_url %>" target="_blank" rel="noopener noreferrer" aria-label="在 Pixiv 查看《<%= art.title %>》原作">
-          <img src="<%= url_for(art.image) %>" alt="<%= art.alt %>" width="<%= art.width %>" height="<%= art.height %>" fetchpriority="high">
+        <span class="artwork-lettering" aria-hidden="true"><span data-artwork-name><%= art.name_en %></span><span class="artwork-star">✦</span></span>
+        <a class="artwork-link" data-artwork-source href="<%= art.source_url || art.image %>" target="_blank" rel="noopener noreferrer" aria-label="查看《<%= art.title %>》原作">
+          <img data-artwork-image src="<%= art.image %>" alt="<%= art.alt %>"<% if (art.width) { %> width="<%= art.width %>"<% } %><% if (art.height) { %> height="<%= art.height %>"<% } %> fetchpriority="high">
         </a>
+        <% if (arts.length > 1) { %><div class="artwork-switch"><button type="button" data-artwork-prev aria-label="上一张">‹</button><span data-artwork-index>1 / <%= arts.length %></span><button type="button" data-artwork-next aria-label="下一张">›</button></div><% } %>
+        <a class="artwork-gallery-link" href="<%= url_for('/gallery/') %>">画廊 ↗</a>
       </div>
-      <figcaption><span><span class="artwork-dot" aria-hidden="true"></span><%= art.character %> <small>· 鸣潮</small></span><a href="<%= art.source_url %>" target="_blank" rel="noopener noreferrer">Illustration by <%= art.artist %> ↗</a></figcaption>
+      <figcaption><span><span class="artwork-dot" aria-hidden="true"></span><span data-artwork-character><%= art.character %></span> <small>· <span data-artwork-series><%= art.series || '鸣潮' %></span></small></span><a data-artwork-artist href="<%= art.source_url || art.image %>" target="_blank" rel="noopener noreferrer">Illustration by <%= art.artist %> ↗</a></figcaption>
+      <% if (arts.length > 1) { %><script type="application/json" data-artwork-data><%- JSON.stringify(arts).replace(/</g, '\\u003c') %></script><% } %>
     </figure>
+    <% } %>
     <div class="greeting-card glass">
       <p class="greeting-kicker"><span aria-hidden="true">✧</span> <span<%- widgets.greeting !== false ? ' data-greeting' : '' %>>很高兴遇见你</span></p>
       <h1 id="welcome-title">嗨，我是 <span><%= config.author %></span><i aria-hidden="true">.</i></h1>
       <p class="welcome-subtitle"><%= theme.hero_title %></p>
       <p class="greeting-description"><%- theme.hero_description %></p>
       <div class="welcome-actions"><a class="primary-link" href="#recent-title">开始阅读 <span aria-hidden="true">↓</span></a><% const githubHref = journal_github_url(); if (githubHref) { %><a class="quiet-link" href="<%= githubHref %>" target="_blank" rel="noopener noreferrer">GitHub ↗</a><% } %></div>
+      <%- journal_social_bar() %>
       <span class="greeting-star" aria-hidden="true">✧</span>
     </div>
   </section>
   <aside class="desktop-widgets" aria-label="桌面小组件">
     <% if (widgets.clock !== false) { %><section class="clock-card glass" aria-labelledby="clock-title"><h2 id="clock-title" class="widget-label"><span class="status-dot" aria-hidden="true"></span>北京时间 <span>UTC+8</span></h2><time data-clock class="clock-digits">--:--</time><p data-clock-date>时间正在路上</p><noscript><p>启用 JavaScript 查看实时时间。</p></noscript></section><% } %>
     <% if (widgets.calendar !== false) { %><section class="calendar-card glass" aria-labelledby="calendar-title"><div class="calendar-heading"><h2 id="calendar-title" data-calendar-title>这一月</h2><span aria-hidden="true">◷</span></div><div data-calendar><p class="muted">日历加载中…</p></div><noscript><p>启用 JavaScript 查看当月日历。</p></noscript></section><% } %>
+    <% if (widgets.music !== false) { const tracks = journal_music_tracks(); const published = tracks.map(track => ({ title: track.title, artist: track.artist, src: /^https?:\/\//i.test(track.src) ? track.src : url_for(track.src) })); %>
+    <section class="music-card glass" aria-labelledby="music-title" data-music-player>
+      <h2 id="music-title" class="widget-label"><%- journal_icon('music') %> 桌面 BGM</h2>
+      <% if (!published.length) { %>
+      <p class="music-empty">还没有放入音频。</p>
+      <p class="muted">把轻量音频放进 <code>source/audio/</code>，再写进主题配置的 <code>music.tracks</code>。</p>
+      <% } else { %>
+      <p class="music-track" data-music-title><%= published[0].title %></p>
+      <p class="music-artist" data-music-artist><%= published[0].artist || '未署名' %></p>
+      <div class="music-controls">
+        <button type="button" data-music-prev aria-label="上一首"<% if (published.length < 2) { %> disabled<% } %>>上一首</button>
+        <button type="button" data-music-toggle aria-pressed="false" aria-label="播放">播放</button>
+        <button type="button" data-music-next aria-label="下一首"<% if (published.length < 2) { %> disabled<% } %>>下一首</button>
+      </div>
+      <label class="sr-only" for="music-progress">播放进度</label>
+      <input id="music-progress" class="music-progress" type="range" min="0" max="1000" value="0" step="1" data-music-progress>
+      <p class="music-time"><span data-music-current>00:00</span> / <span data-music-duration>00:00</span></p>
+      <p class="music-error" data-music-error role="status" hidden>这首暂时播不了，可以换一首或稍后再试。</p>
+      <audio data-music-audio preload="none" src="<%= published[0].src %>"></audio>
+      <script type="application/json" data-music-tracks><%- JSON.stringify(published).replace(/</g, '\\u003c') %></script>
+      <% } %>
+      <noscript><p>启用 JavaScript 后可以播放本地音乐。</p></noscript>
+    </section>
+    <% } %>
     <section class="notebook-card glass" aria-labelledby="notebook-title"><p class="widget-label">A FEW THINGS ABOUT ME</p><h2 id="notebook-title">记录，也是成长<span aria-hidden="true">✦</span></h2><p>代码里的小发现，<br>和屏幕外的小日常。</p><div class="profile-stats"><a href="<%= url_for('/archives/') %>"><strong><%= site.posts.length %></strong><span>篇文章</span></a><a href="<%= url_for('/categories/') %>"><strong><%= site.categories.filter(term => term.posts.length > 0).length %></strong><span>个分类</span></a><a href="<%= url_for('/tags/') %>"><strong><%= site.tags.filter(term => term.posts.length > 0).length %></strong><span>个标签</span></a></div><a class="quiet-link" href="<%= url_for('/about/') %>">更多关于我 ↗</a></section>
   </aside>
 </div>

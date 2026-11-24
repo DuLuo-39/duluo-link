@@ -1,0 +1,18 @@
+# 爱弥斯画廊。新图放进 source/images/gallery/，再在 items 里追加一条。
+title: 爱弥斯画廊
+eyebrow: AEMEATH GALLERY
+description: 收集喜欢的爱弥斯同人插画，每一张都保留完整构图与画师署名。
+items:
+  - image: /images/aemeath.webp
+    width: 962
+    height: 1400
+    title: o_<
+    character: 爱弥斯
+    name_en: AEMEATH
+    series: 鸣潮
+    artist: / /
+    source_url: https://www.pixiv.net/artworks/141188192
+    artist_url: https://www.pixiv.net/users/90015209
+    alt: 爱弥斯闭眼轻笑的完整插画《o_<》
+    featured: true
+    note: 闭眼轻笑的瞬间，也是这间小栈最初的桌面风景。

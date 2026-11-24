@@ -25,6 +25,7 @@
   <script src="<%= url_for('/js/site.js') %>" defer></script>
   <% if (is_home()) { %><script src="<%= url_for('/js/desktop.js') %>" defer></script><% } %>
   <% if (page.path === 'share/index.html') { %><script src="<%= url_for('/js/share.js') %>" defer></script><% } %>
+  <% if (page.path === 'gallery/index.html') { %><script src="<%= url_for('/js/gallery.js') %>" defer></script><% } %>
 </head>
 <body class="<%= is_home() ? 'page-home' : 'page-inner' %>">
   <a class="skip-link" href="#main">跳到正文</a>

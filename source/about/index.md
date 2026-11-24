@@ -28,6 +28,8 @@ description: 关于这个博客，以及写作的人。
 
 [在 Pixiv 查看原作 ↗](https://www.pixiv.net/artworks/141188192) · [画师主页 ↗](https://www.pixiv.net/users/90015209)
 
+更多喜欢的爱弥斯插画收在 [画廊](/gallery/)。
+
 桌面布局参考 [lvy-neko](https://lvyovo-wiki.tech/)，围绕爱弥斯的粉发与冰蓝色细节，布置成自己的小小记录空间。
 
 这是 DuLuo 的个人博客。画面及角色版权归各自权利方所有，与作品官方没有关联。

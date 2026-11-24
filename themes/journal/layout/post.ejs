@@ -6,5 +6,13 @@
     <% if (page.prev || page.next) { %><nav class="post-navigation" aria-label="相邻文章"><% if (page.prev) { %><a href="<%= url_for(page.prev.path) %>"><span>← 较新一篇</span><strong><%= page.prev.title %></strong></a><% } %><% if (page.next) { %><a href="<%= url_for(page.next.path) %>"><span>较早一篇 →</span><strong><%= page.next.title %></strong></a><% } %></nav><% } %>
   </article>
   <% const contents = toc(page.content, { list_number: false, max_depth: 3 }); %>
-  <aside class="reading-sidebar" aria-label="文章导航"><details class="toc-panel" open><summary>本篇目录 <span aria-hidden="true">⌄</span></summary><nav class="toc-content" aria-label="文章目录"><%- contents || '<p class="muted">这是一篇短笔记，直接开始阅读吧。</p>' %></nav></details><a class="back-to-top" href="#main">回到顶部 ↑</a></aside>
+  <% const cover = typeof page.cover === 'string' ? page.cover.trim() : ''; %>
+  <% const coverSafe = (cover.startsWith('/') && !cover.startsWith('//')) || /^https?:\/\//i.test(cover); %>
+  <% const coverAlt = typeof page.cover_alt === 'string' && page.cover_alt.trim() ? page.cover_alt.trim() : page.title; %>
+  <aside class="reading-sidebar" aria-label="文章导航">
+    <% if (coverSafe) { %><figure class="post-cover-card glass"><img src="<%= /^https?:\/\//i.test(cover) ? cover : url_for(cover) %>" alt="<%= coverAlt %>" loading="lazy"></figure><% } %>
+    <% if (page.description) { %><section class="post-summary-card glass" aria-labelledby="post-summary-title"><h2 id="post-summary-title">本篇摘要</h2><p><%= page.description %></p></section><% } %>
+    <details class="toc-panel" open><summary>本篇目录 <span aria-hidden="true">⌄</span></summary><nav class="toc-content" aria-label="文章目录"><%- contents || '<p class="muted">这是一篇短笔记，直接开始阅读吧。</p>' %></nav></details>
+    <a class="back-to-top" href="#main">回到顶部 ↑</a>
+  </aside>
 </div>
