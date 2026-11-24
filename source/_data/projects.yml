@@ -1,0 +1,22 @@
+# 我的项目。只改这一份列表，重新构建后就会出现在 /projects/。
+title: 我的项目
+eyebrow: PROJECTS
+description: 亲手写下的小作品与持续维护中的折腾记录。
+items:
+  - name: DuLuo 的小栈
+    status: 维护中
+    summary: 基于 Hexo 8 与自研 Journal 毛玻璃主题打造的个人博客与数字桌面。
+    stack:
+      - Hexo 8
+      - EJS
+      - Vanilla CSS/JS
+      - Netlify
+    repo: https://github.com/DuLuo-39/duluo-link
+    demo: https://duluo.link
+    highlight: true
+  - name: 下一栏
+    status: 规划中
+    summary: 还写在纸上的一块栏目。等它真正做出来，再补上仓库和演示。
+    stack:
+      - 待定
+    highlight: false

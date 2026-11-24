@@ -1,0 +1,30 @@
+<section class="project-page">
+  <header class="archive-header">
+    <p class="eyebrow"><%= page.eyebrow || 'PROJECTS' %></p>
+    <h1><%= page.title || '我的项目' %></h1>
+    <% if (page.description) { %><p><%= page.description %></p><% } %>
+  </header>
+  <% const items = Array.isArray(page.items) ? page.items : []; %>
+  <% if (items.length) { %>
+  <div class="project-grid">
+    <% items.forEach(function(item) { %>
+    <article class="project-card glass<%= item.highlight ? ' is-highlight' : '' %>">
+      <div class="project-card-top">
+        <span class="project-status"><%= item.status %></span>
+      </div>
+      <h2><%= item.name %></h2>
+      <% if (item.summary) { %><p><%= item.summary %></p><% } %>
+      <% if (item.stack.length) { %><div class="share-tags"><% item.stack.forEach(function(name) { %><span><%= name %></span><% }); %></div><% } %>
+      <% if (item.repo || item.demo) { %>
+      <div class="project-actions">
+        <% if (item.repo) { %><a href="<%= item.repo %>" target="_blank" rel="noopener noreferrer">源码 <span aria-hidden="true">↗</span></a><% } %>
+        <% if (item.demo) { %><a class="project-demo" href="<%= item.demo %>" target="_blank" rel="noopener noreferrer">演示 <span aria-hidden="true">↗</span></a><% } %>
+      </div>
+      <% } %>
+    </article>
+    <% }); %>
+  </div>
+  <% } else { %>
+  <p class="empty-state">项目还在路上。写好的作品，会一张张放在这里。</p>
+  <% } %>
+</section>

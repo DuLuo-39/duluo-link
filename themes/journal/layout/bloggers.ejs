@@ -1,0 +1,25 @@
+<section class="blogger-page">
+  <header class="archive-header">
+    <p class="eyebrow"><%= page.eyebrow || 'BLOGROLL' %></p>
+    <h1><%= page.title || '优秀博客' %></h1>
+    <% if (page.description) { %><p><%= page.description %></p><% } %>
+  </header>
+  <% const items = Array.isArray(page.items) ? page.items : []; %>
+  <% if (items.length) { %>
+  <div class="blogger-grid">
+    <% items.forEach(function(item) { %>
+    <a class="blogger-card glass" href="<%= item.url %>" target="_blank" rel="noopener noreferrer">
+      <span class="blogger-avatar" aria-hidden="true"><% if (item.avatar) { %><img src="<%= item.avatar %>" alt=""><% } else { %><%= item.avatar_text %><% } %></span>
+      <span class="blogger-body">
+        <% if (item.tag) { %><span class="share-badge"><%= item.tag %></span><% } %>
+        <h2><%= item.name %> <span aria-hidden="true">↗</span></h2>
+        <% if (item.summary) { %><p><%= item.summary %></p><% } %>
+      </span>
+    </a>
+    <% }); %>
+  </div>
+  <% } else { %>
+  <p class="empty-state">还没有收录博客。值得反复翻的站点，之后会慢慢补上。</p>
+  <% } %>
+  <p class="blogger-note">想交换友链，可以在 <a href="<%= url_for('/about/') %>">关于我</a> 留下联系方式。</p>
+</section>

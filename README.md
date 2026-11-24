@@ -77,6 +77,9 @@ node tooling/check-publishing.cjs
 | 名称、作者、描述 | `_config.yml` |
 | 插画、配色、组件开关、社交链接、首页文字 | `themes/journal/_config.yml` |
 | 关于我 | `source/about/index.md` |
+| 推荐分享 | `source/_data/share.yml` |
+| 我的项目 | `source/_data/projects.yml` |
+| 优秀博客 | `source/_data/bloggers.yml` |
 | 文章 | `source/_posts/*.md` |
 | 页面样式 | `themes/journal/source/css/style.css` |
 | 搜索、代码复制与目录交互 | `themes/journal/source/js/site.js` |

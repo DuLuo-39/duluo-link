@@ -1,1 +1,71 @@
-<section class="archive-page"><header class="archive-header"><p class="eyebrow">THE ARCHIVE</p><h1>文章归档</h1><p>一些发现，一些思考，都留在这里。</p></header><% let lastYear = ''; %><% page.posts.each(function(post) { const year = date(post.date, 'YYYY'); %><% if (year !== lastYear) { lastYear = year; %><h2 class="archive-year"><%= year %></h2><% } %><article class="archive-row"><time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'MM.DD') %></time><h3><a href="<%= url_for(post.path) %>"><%= post.title %></a></h3><span aria-hidden="true">↗</span></article><% }); %><% if (!page.posts.length) { %><p>第一篇记录，很快见。</p><% } %><% if (page.total > 1) { %><nav class="pagination" aria-label="归档分页"><%- paginator({ prev_text: '上一页', next_text: '下一页' }) %></nav><% } %></section>
+<section class="archive-page">
+  <header class="archive-header">
+    <p class="eyebrow">THE ARCHIVE</p>
+    <h1>文章归档</h1>
+    <p>一些发现，一些思考，都留在这里。</p>
+  </header>
+  <% const posts = page.posts ? (typeof page.posts.toArray === 'function' ? page.posts.toArray() : Array.from(page.posts)) : []; %>
+  <% const years = []; const categoryNames = []; %>
+  <% posts.forEach(function(post) { %>
+    <% const year = date(post.date, 'YYYY'); if (!years.includes(year)) years.push(year); %>
+    <% post.categories.toArray().forEach(function(category) { if (!categoryNames.includes(category.name)) categoryNames.push(category.name); }); %>
+  <% }); %>
+  <% const categoryCount = site.categories.filter(term => term.posts.length > 0).length; %>
+  <% const tagCount = site.tags.filter(term => term.posts.length > 0).length; %>
+  <div class="archive-toolbar">
+    <nav class="archive-shortcuts" aria-label="归档视图">
+      <% if (!page.year && !page.month) { %><span class="archive-pill is-current" aria-current="page">全部时间轴</span><% } else { %><a class="archive-pill" href="<%= url_for('/archives/') %>">全部时间轴</a><% } %>
+      <a class="archive-pill" href="<%= url_for('/categories/') %>">按分类浏览 <span class="pill-count"><%= categoryCount %><span class="sr-only">个分类</span></span></a>
+      <a class="archive-pill" href="<%= url_for('/tags/') %>">按标签漫游 <span class="pill-count"><%= tagCount %><span class="sr-only">个标签</span></span></a>
+    </nav>
+    <% if (posts.length) { %>
+    <div class="archive-filters" data-archive-filter hidden>
+      <div class="archive-filter-group" role="group" aria-label="按年份筛选">
+        <button class="archive-pill" type="button" data-filter-year="" aria-pressed="true">全部年份</button>
+        <% years.forEach(function(year) { %><button class="archive-pill" type="button" data-filter-year="<%= year %>" aria-pressed="false"><%= year %></button><% }); %>
+      </div>
+      <% if (categoryNames.length) { %>
+      <div class="archive-filter-group" role="group" aria-label="按分类筛选">
+        <button class="archive-pill" type="button" data-filter-category="" aria-pressed="true">全部分类</button>
+        <% categoryNames.forEach(function(name) { %><button class="archive-pill" type="button" data-filter-category="<%= name %>" aria-pressed="false"><%= name %></button><% }); %>
+      </div>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+  <% if (posts.length) { %>
+  <div class="timeline">
+    <% let lastYear = ''; %>
+    <% posts.forEach(function(post) { %>
+      <% const year = date(post.date, 'YYYY'); %>
+      <% const categories = post.categories.toArray(); %>
+      <% const tags = post.tags.toArray().slice(0, 3); %>
+      <% if (year !== lastYear) { %>
+        <% if (lastYear) { %></div></section><% } %>
+        <% lastYear = year; %>
+        <section class="timeline-year" data-year-group="<%= year %>">
+          <h2 class="timeline-year-label"><%= year %></h2>
+          <div class="timeline-track">
+      <% } %>
+      <article class="timeline-card glass" data-year="<%= year %>" data-categories="<%= JSON.stringify(categories.map(category => category.name)) %>">
+        <span class="timeline-node" aria-hidden="true"></span>
+        <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'MM.DD') %></time>
+        <div class="timeline-body">
+          <h3><a href="<%= url_for(post.path) %>"><%= post.title %></a></h3>
+          <% if (post.description) { %><p class="timeline-summary"><%= post.description %></p><% } %>
+          <div class="timeline-meta">
+            <% categories.forEach(function(category) { %><a class="category-label" href="<%= url_for(category.path) %>"><%= category.name %></a><% }); %>
+            <% if (tags.length) { %><div class="timeline-tags"><% tags.forEach(function(tag) { %><a href="<%= url_for(tag.path) %>">#<%= tag.name %></a><% }); %></div><% } %>
+            <span class="timeline-reading"><%= reading_minutes(post) %> 分钟阅读</span>
+          </div>
+        </div>
+      </article>
+    <% }); %>
+    <% if (lastYear) { %></div></section><% } %>
+  </div>
+  <p class="empty-state" data-archive-empty hidden role="status">这个筛选下，还没有文章。</p>
+  <% } else { %>
+  <p class="empty-state">第一篇记录，很快见。</p>
+  <% } %>
+  <% if (page.total > 1) { %><nav class="pagination" aria-label="归档分页"><%- paginator({ prev_text: '上一页', next_text: '下一页' }) %></nav><% } %>
+</section>

@@ -1,0 +1,62 @@
+# 推荐分享。只改这一份列表，重新构建后就会出现在 /share/。
+title: 推荐分享
+eyebrow: RESOURCE WIKI
+description: 收藏平时高频使用的文档、工具与灵感来源。
+items:
+  - name: Hexo 官方文档
+    url: https://hexo.io/zh-cn/docs/
+    category: 开发文档
+    rating: 5
+    tags:
+      - 博客
+      - 静态站点
+    summary: 这个小栈用的静态博客框架。模板、数据文件、永久链接和部署都从这里查。
+  - name: MDN Web Docs
+    url: https://developer.mozilla.org/zh-CN/docs/Web
+    category: 开发文档
+    rating: 5
+    tags:
+      - HTML
+      - CSS
+      - JavaScript
+    summary: 写页面时最先打开的参考。语义、CSS 属性和浏览器接口都以这里为准。
+  - name: Node.js 文档
+    url: https://nodejs.org/docs/latest/api/
+    category: 开发文档
+    rating: 5
+    tags:
+      - Node.js
+      - 运行时
+    summary: 本地预览和构建脚本跑在 Node.js 24 上，模块、测试和文件接口来这里核对。
+  - name: GitHub Docs
+    url: https://docs.github.com/zh
+    category: 开发文档
+    rating: 4
+    tags:
+      - Git
+      - 仓库
+    summary: 源码放在 GitHub。提交、分支和仓库设置不确定时，先看官方说明。
+  - name: Netlify Docs
+    url: https://docs.netlify.com/
+    category: 部署托管
+    rating: 5
+    tags:
+      - 部署
+      - 持续集成
+    summary: 网站由 Netlify 构建和托管。构建设置、环境变量和域名绑定按这份文档来。
+  - name: Cloudflare Docs
+    url: https://developers.cloudflare.com/
+    category: 部署托管
+    rating: 4
+    tags:
+      - DNS
+      - 域名
+    summary: duluo.link 的 DNS 在 Cloudflare。改解析或排查跳转时，从这里查记录和代理说明。
+  - name: Markdown Guide
+    url: https://www.markdownguide.org/
+    category: 写作参考
+    rating: 4
+    tags:
+      - Markdown
+      - 写作
+    summary: 文章都用 Markdown 写。标题、链接、代码块和表格的写法，用这份指南当备忘。

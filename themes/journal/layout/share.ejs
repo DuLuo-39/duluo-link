@@ -1,0 +1,47 @@
+<section class="share-page" data-share-page>
+  <header class="archive-header">
+    <p class="eyebrow"><%= page.eyebrow || 'RESOURCE WIKI' %></p>
+    <h1><%= page.title || '推荐分享' %></h1>
+    <% if (page.description) { %><p><%= page.description %></p><% } %>
+  </header>
+  <% const items = Array.isArray(page.items) ? page.items : []; %>
+  <% const categories = Array.isArray(page.categories) ? page.categories : []; %>
+  <% if (items.length) { %>
+  <div class="share-toolbar glass">
+    <form class="share-search" role="search" action="<%= url_for('/share/') %>" method="get">
+      <label class="sr-only" for="share-query">搜索资源</label>
+      <input id="share-query" type="search" name="q" data-share-query placeholder="搜索名称、简介、分类或标签，多个词用空格分开" autocomplete="off" maxlength="120">
+    </form>
+    <div class="share-categories" role="group" aria-label="按分类筛选">
+      <button class="archive-pill" type="button" data-share-category="" aria-pressed="true">全部 (<%= items.length %>)</button>
+      <% categories.forEach(function(category) { %>
+      <button class="archive-pill" type="button" data-share-category="<%= category.name %>" aria-pressed="false"><%= category.name %> (<%= category.count %>)</button>
+      <% }); %>
+    </div>
+    <p class="share-status" data-share-status role="status" aria-live="polite">共 <%= items.length %> 条资源</p>
+    <noscript><p class="muted">启用 JavaScript 后可以按关键词和分类筛选。下面已经列出全部资源。</p></noscript>
+  </div>
+  <div class="share-grid">
+    <% items.forEach(function(item) { %>
+    <article class="share-card glass" data-share-item>
+      <div class="share-card-top">
+        <span class="share-badge"><%= item.category %></span>
+        <span class="share-stars" aria-label="推荐指数 <%= item.rating %>/5">
+          <% for (let index = 1; index <= 5; index++) { %><svg class="<%= index <= item.rating ? 'is-on' : '' %>" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m12 3.2 2.2 6.2 6.6.5-5 4.2 1.6 6.4L12 17.2 6.6 20.5 8.2 14 3.2 9.9l6.6-.5z"/></svg><% } %>
+        </span>
+      </div>
+      <h2><a href="<%= item.url %>" target="_blank" rel="noopener noreferrer"><%= item.name %> <span aria-hidden="true">↗</span></a></h2>
+      <% if (item.summary) { %><p><%= item.summary %></p><% } %>
+      <% if (item.tags.length) { %><div class="share-tags"><% item.tags.forEach(function(tag) { %><span>#<%= tag %></span><% }); %></div><% } %>
+    </article>
+    <% }); %>
+  </div>
+  <div class="empty-state share-empty" data-share-empty hidden>
+    <p>没有找到匹配的资源。</p>
+    <button class="archive-pill" type="button" data-share-reset>重置筛选</button>
+  </div>
+  <script type="application/json" id="share-data"><%- JSON.stringify(items).replace(/</g, '\\u003c') %></script>
+  <% } else { %>
+  <p class="empty-state">资源库还空着。常用的文档和工具，会一条条收进来。</p>
+  <% } %>
+</section>

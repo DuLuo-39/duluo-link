@@ -1,0 +1,20 @@
+# 优秀博客。只改这一份列表，重新构建后就会出现在 /bloggers/。
+title: 优秀博客
+eyebrow: BLOGROLL
+description: 值得反复翻阅的独立博客与灵感站点。
+items:
+  - name: lvy-neko
+    url: https://lvyovo-wiki.tech/
+    avatar_text: LV
+    tag: 灵感参考
+    summary: 兼具桌面氛围与知识库质感的个人博客，也是本站桌面布局的灵感来源。
+  - name: Anthony Fu
+    url: https://antfu.me/
+    avatar_text: AF
+    tag: 开发笔记
+    summary: 公开的个人站点，工具、笔记和实验放在一起，读起来很干净。
+  - name: 阮一峰的网络日志
+    url: https://www.ruanyifeng.com/blog/
+    avatar_text: 阮
+    tag: 长期写作
+    summary: 长期更新的中文独立博客。科技周刊和文章归档都适合慢慢翻。

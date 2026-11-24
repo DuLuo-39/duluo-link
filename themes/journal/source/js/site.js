@@ -179,6 +179,47 @@
     updateReading();
   }
 
+  const archiveFilter = document.querySelector('[data-archive-filter]');
+  const archivePage = archiveFilter && archiveFilter.closest('.archive-page');
+  if (archiveFilter && archivePage) {
+    const cards = [...archivePage.querySelectorAll('.timeline-card')];
+    const groups = [...archivePage.querySelectorAll('[data-year-group]')];
+    const empty = archivePage.querySelector('[data-archive-empty]');
+    let year = '';
+    let category = '';
+    const namesOf = card => {
+      try { return JSON.parse(card.dataset.categories || '[]'); }
+      catch { return []; }
+    };
+    function applyArchiveFilter() {
+      let visible = 0;
+      cards.forEach(card => {
+        const matchYear = !year || card.dataset.year === year;
+        const matchCategory = !category || namesOf(card).includes(category);
+        const show = matchYear && matchCategory;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      groups.forEach(group => {
+        group.hidden = ![...group.querySelectorAll('.timeline-card')].some(card => !card.hidden);
+      });
+      if (empty) empty.hidden = visible !== 0;
+    }
+    archiveFilter.addEventListener('click', event => {
+      const button = event.target.closest('button');
+      if (!button || !archiveFilter.contains(button)) return;
+      if (button.hasAttribute('data-filter-year')) {
+        year = button.getAttribute('data-filter-year') || '';
+        archiveFilter.querySelectorAll('[data-filter-year]').forEach(item => item.setAttribute('aria-pressed', item === button ? 'true' : 'false'));
+      } else if (button.hasAttribute('data-filter-category')) {
+        category = button.getAttribute('data-filter-category') || '';
+        archiveFilter.querySelectorAll('[data-filter-category]').forEach(item => item.setAttribute('aria-pressed', item === button ? 'true' : 'false'));
+      } else return;
+      applyArchiveFilter();
+    });
+    archiveFilter.hidden = false;
+  }
+
   document.querySelectorAll('[data-copy-value]').forEach(button => {
     let timer;
     button.addEventListener('click', async () => {

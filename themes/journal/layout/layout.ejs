@@ -24,6 +24,7 @@
   <style>:root{<%- desktop_palette() %>}</style>
   <script src="<%= url_for('/js/site.js') %>" defer></script>
   <% if (is_home()) { %><script src="<%= url_for('/js/desktop.js') %>" defer></script><% } %>
+  <% if (page.path === 'share/index.html') { %><script src="<%= url_for('/js/share.js') %>" defer></script><% } %>
 </head>
 <body class="<%= is_home() ? 'page-home' : 'page-inner' %>">
   <a class="skip-link" href="#main">跳到正文</a>
@@ -31,11 +32,13 @@
     <div class="wrapper header-inner">
       <a class="brand" href="<%= url_for('/') %>" aria-label="<%= config.title %>首页"><span class="brand-mark" aria-hidden="true">D<span>·</span></span><span>DuLuo<span class="brand-note">的小栈</span></span></a>
       <p class="nav-label">MY NOTEBOOK</p>
+      <% const readingNow = is_archive() || is_post() || page.taxonomy_kind === 'category' || page.taxonomy_kind === 'tag'; %>
       <nav aria-label="主导航">
         <a href="<%= url_for('/') %>"<%- is_home() ? ' aria-current="page"' : '' %>><%- journal_icon('home') %><span>我的桌面</span></a>
-        <a href="<%= url_for('/archives/') %>"<%- is_archive() ? ' aria-current="page"' : '' %>><%- journal_icon('archive') %><span>文章归档</span></a>
-        <a href="<%= url_for('/categories/') %>"<%- page.taxonomy_kind === 'category' ? ' aria-current="page"' : '' %>><%- journal_icon('category') %><span>文章分类</span></a>
-        <a href="<%= url_for('/tags/') %>"<%- page.taxonomy_kind === 'tag' ? ' aria-current="page"' : '' %>><%- journal_icon('tag') %><span>标签漫游</span></a>
+        <a href="<%= url_for('/archives/') %>"<%- readingNow ? ' aria-current="page"' : '' %>><%- journal_icon('archive') %><span>近期文章</span></a>
+        <a href="<%= url_for('/projects/') %>"<%- page.path === 'projects/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('projects') %><span>我的项目</span></a>
+        <a href="<%= url_for('/share/') %>"<%- page.path === 'share/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('share') %><span>推荐分享</span></a>
+        <a href="<%= url_for('/bloggers/') %>"<%- page.path === 'bloggers/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('bloggers') %><span>优秀博客</span></a>
         <a href="<%= url_for('/about/') %>"<%- page.path === 'about/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('about') %><span>关于我</span></a>
       </nav>
       <button class="search-trigger" type="button" data-search-open hidden aria-haspopup="dialog" aria-controls="site-search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索</span><kbd>Ctrl K</kbd></button>
