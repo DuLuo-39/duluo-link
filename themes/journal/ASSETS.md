@@ -1,14 +1,12 @@
-# 网站视觉素材
+# 插画来源
 
-2026-09-14 从作品官网获取。角色图片使用官方透明 PNG，不经过 AI 重绘；背景仅转换为 WebP，网页通过 CSS 排版组合。
+- 作品：《o_<》；角色：《鸣潮》爱弥斯。
+- 作者：[ / / ](https://www.pixiv.net/users/90015209)。
+- 原作：https://www.pixiv.net/artworks/141188192
+- 2026-09-15 从 Pixiv 公开原作读取；作品说明和作者公开简介均为空，未找到公开的使用说明。这不是开放许可或已获得画师授权的证明。
+- 原始文件：3737 × 5440 PNG。网页版本：962 × 1400 WebP，133744 字节，位于 `source/images/aemeath.webp`。
+- 仅等比例缩小与编码压缩，保留完整构图、背景、笔触及原有标识。未生成、重绘或抠图。
+- 原始下载留在本地忽略目录 `.netlify/art/`，不随网站发布。
+- 首页画框和关于页保留署名及原作链接。角色与插画权利归各自权利方，本站与官方及画师无关联。
 
-| 文件 | 作品 / 原始地址 |
-| --- | --- |
-| your-name-sky.webp | 《你的名字。》https://www.kiminona.com/images/top/intro_vsl.png |
-| shizuku.png | https://nigewaka.run/assets/img/chara/chara_02.png |
-| shizuku-smile.png | https://nigewaka.run/assets/img/chara/face_02-1.png |
-
-背景：© 2016「君の名は。」製作委員会。
-角色：© 松井優征／集英社・逃げ上手の若君製作委員会。
-
-这些素材归各自权利方所有；源码的开放不为这些素材授予额外许可。公开的素材来源也可在网站“关于我”页面查看。
+旧版诹访雫与《你的名字。》素材已从主题发布目录移除；此前版本可从 Git 历史恢复。

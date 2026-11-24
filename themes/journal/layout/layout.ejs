@@ -8,7 +8,8 @@
   <title><%= currentTitle %></title>
   <meta name="description" content="<%= summary %>">
   <meta name="author" content="<%= config.author %>">
-  <meta name="theme-color" content="#f3f8fc">
+  <% if (config.build_commit) { %><meta name="build-commit" content="<%= config.build_commit %>"><% } %>
+  <meta name="theme-color" content="#f4eef8">
   <% if (config.preview_build || page.path === '404.html') { %><meta name="robots" content="noindex, nofollow"><% } %>
   <link rel="canonical" href="<%= full_url_for(page.path || '') %>">
   <meta property="og:type" content="<%= is_post() ? 'article' : 'website' %>">
@@ -19,21 +20,25 @@
   <meta property="og:locale" content="zh_CN">
   <link rel="icon" type="image/svg+xml" href="<%= url_for('/favicon.svg') %>">
   <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
+  <style>:root{<%- desktop_palette() %>}</style>
   <script src="<%= url_for('/js/site.js') %>" defer></script>
+  <% if (is_home()) { %><script src="<%= url_for('/js/desktop.js') %>" defer></script><% } %>
 </head>
-<body>
+<body class="<%= is_home() ? 'page-home' : 'page-inner' %>">
   <a class="skip-link" href="#main">跳到正文</a>
   <header class="site-header">
     <div class="wrapper header-inner">
       <a class="brand" href="<%= url_for('/') %>" aria-label="<%= config.title %>首页"><span class="brand-mark" aria-hidden="true">D<span>·</span></span><span>DuLuo<span class="brand-note">的小栈</span></span></a>
+      <p class="nav-label">MY NOTEBOOK</p>
       <nav aria-label="主导航">
-        <a href="<%= url_for('/') %>"<%- is_home() ? ' aria-current="page"' : '' %>>首页</a>
-        <a href="<%= url_for('/archives/') %>"<%- is_archive() ? ' aria-current="page"' : '' %>>归档</a>
-        <a href="<%= url_for('/categories/') %>"<%- page.taxonomy_kind === 'category' ? ' aria-current="page"' : '' %>>分类</a>
-        <a href="<%= url_for('/tags/') %>"<%- page.taxonomy_kind === 'tag' ? ' aria-current="page"' : '' %>>标签</a>
-        <a href="<%= url_for('/about/') %>"<%- page.path === 'about/index.html' ? ' aria-current="page"' : '' %>>关于我</a>
+        <a href="<%= url_for('/') %>"<%- is_home() ? ' aria-current="page"' : '' %>><%- journal_icon('home') %><span>我的桌面</span></a>
+        <a href="<%= url_for('/archives/') %>"<%- is_archive() ? ' aria-current="page"' : '' %>><%- journal_icon('archive') %><span>文章归档</span></a>
+        <a href="<%= url_for('/categories/') %>"<%- page.taxonomy_kind === 'category' ? ' aria-current="page"' : '' %>><%- journal_icon('category') %><span>文章分类</span></a>
+        <a href="<%= url_for('/tags/') %>"<%- page.taxonomy_kind === 'tag' ? ' aria-current="page"' : '' %>><%- journal_icon('tag') %><span>标签漫游</span></a>
+        <a href="<%= url_for('/about/') %>"<%- page.path === 'about/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('about') %><span>关于我</span></a>
       </nav>
       <button class="search-trigger" type="button" data-search-open hidden aria-haspopup="dialog" aria-controls="site-search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索</span><kbd>Ctrl K</kbd></button>
+      <p class="nav-note"><span aria-hidden="true">✦</span> 保持好奇，慢慢生长。</p>
     </div>
   </header>
   <% if (is_post()) { %><div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div><% } %>

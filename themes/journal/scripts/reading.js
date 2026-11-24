@@ -46,5 +46,6 @@ hexo.extend.generator.register('journal-reading', function (locals) {
     categories: post.categories.map(category => category.name)
   }));
   routes.push({ path: 'search.json', data: JSON.stringify(posts) });
+  routes.push({ path: 'recommendations.json', data: JSON.stringify(posts.map(({ title, url, date, description }) => ({ title, url, date, description }))) });
   return routes;
 });

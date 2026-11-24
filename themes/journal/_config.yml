@@ -1,8 +1,32 @@
-# 首页文案。hero_title 和 hero_description 支持 HTML 换行。
 eyebrow: DULUO'S NOTEBOOK
-hero_title: 代码、日常，<br>还有热爱。
-hero_description: 在代码里探索，在故事里相遇。<br>记录每一个值得留下的瞬间。
-hero_image: /images/your-name-sky.webp
-hero_alt: 《你的名字。》官方原画中的天空与晚霞
+hero_title: 代码、日常，还有热爱。
+hero_description: 写一点代码，存一些想法。<br>在这里，慢慢收集生活的闪光。
 footer_note: 保持好奇，下一页见。
 github_url: https://github.com/DuLuo-39
+
+artwork:
+  image: /images/aemeath.webp
+  width: 962
+  height: 1400
+  alt: 爱弥斯闭眼轻笑的完整插画《o_<》
+  character: 爱弥斯
+  name_en: AEMEATH
+  title: o_<
+  artist: / /
+  source_url: https://www.pixiv.net/artworks/141188192
+  artist_url: https://www.pixiv.net/users/90015209
+
+# 使用十六进制颜色；由主题统一生成 CSS 变量。
+palette:
+  accent: '#78619c'
+  ink: '#39364b'
+  muted: '#726b83'
+  pink: '#f6dfeb'
+  lavender: '#e9e2f7'
+  blue: '#ddedf7'
+
+widgets:
+  greeting: true
+  clock: true
+  calendar: true
+  random_post: true

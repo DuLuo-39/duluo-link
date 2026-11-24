@@ -15,6 +15,7 @@ async function build() {
     hexo.config.url = parsed.origin;
     hexo.config.root = '/';
     hexo.config.preview_build = Boolean(preview);
+    hexo.config.build_commit = /^[a-f0-9]{40}$/i.test(process.env.COMMIT_REF || '') ? process.env.COMMIT_REF : '';
     await hexo.call('clean');
     await hexo.call('generate');
     await hexo.exit();

@@ -3,7 +3,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 
 const output = path.resolve('public');
-const required = ['index.html', 'about/index.html', 'archives/index.html', 'categories/index.html', 'tags/index.html', '404.html', 'css/style.css', 'js/site.js', 'search.json', 'favicon.svg', 'sitemap.xml'];
+const required = ['index.html', 'about/index.html', 'archives/index.html', 'categories/index.html', 'tags/index.html', '404.html', 'css/style.css', 'js/site.js', 'js/desktop.js', 'search.json', 'recommendations.json', 'favicon.svg', 'sitemap.xml'];
 for (const file of required) assert.ok(fs.existsSync(path.join(output, file)), `Missing output: ${file}`);
 
 function walk(directory) {
@@ -43,6 +43,8 @@ assert.match(sitemap, /<urlset\b/, 'Invalid sitemap');
 assert.ok(!sitemap.includes('/404.html'), '404 page should not be listed in the sitemap');
 const index = JSON.parse(fs.readFileSync(path.join(output, 'search.json'), 'utf8'));
 assert.ok(Array.isArray(index), 'Search index must be an array');
+const recommendations = JSON.parse(fs.readFileSync(path.join(output, 'recommendations.json'), 'utf8'));
+assert.deepEqual(recommendations, index.map(({ title, url, date, description }) => ({ title, url, date, description })), 'Recommendations must match the published search collection without full article content');
 const postPages = pages.filter(file => path.relative(output, file).split(path.sep)[0] === 'posts');
 assert.equal(index.length, postPages.length, 'Search must index every published article exactly once');
 assert.equal(new Set(index.map(post => post.url)).size, index.length, 'Duplicate search results');

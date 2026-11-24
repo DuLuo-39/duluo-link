@@ -23,14 +23,16 @@
 
 ## 主题与阅读功能
 
-- 清透蓝白布局，首页使用《你的名字。》官方天空背景与诹访雫官方透明立绘；侧栏头像使用官网的雫笑脸原画。来源与权利信息见 `themes/journal/ASSETS.md` 和网站“关于我”。
+- 粉、紫、冰蓝渐变的个人桌面布局，使用爱弥斯完整插画卡片、玻璃导航和清晰的正文阅读底色。来源与权利信息见 `themes/journal/ASSETS.md` 和网站“关于我”。
+- 首页包含北京时间的分时问候、24 小时时钟、周一开始的当月日历；日期跨日或跨月自动更新，重新回到标签页时立即刷新。
+- 随机推荐按需加载 `recommendations.json`，只包含已发布文章的标题、链接、日期和简介。多篇文章可切换且不连续重复，单篇隐藏按钮，零篇显示空状态；网络失败仍可阅读构建时显示的文章。
 - 文章自动生成最多三级的目录、阅读时长和阅读进度。桌面目录跟随滚动，手机目录可折叠。
 - 代码块提供高亮、语言标识和复制按钮，复制时保留换行。浏览器拒绝剪贴板访问时，选中代码并提示手动复制。
 - 分类和标签页面随文章 front matter 自动生成，不需要手动建页面。
 - 站内搜索按需加载 `search.json`，支持中文、标题、正文和标签，多关键词以空格分隔。点击搜索或按 `Ctrl/⌘ K` 打开，按 `Esc` 关闭。
 - 搜索索引只使用 Hexo 发布集合，遵循草稿与未来文章配置，不依赖外部搜索服务。
 
-OP 表情画面尚未选定；当前头像来自角色页，不是 OP 截帧。
+插画、署名、六个主题配色和四个组件开关集中配置于 `themes/journal/_config.yml`。将 `widgets` 下的对应项设为 `false` 可关闭该组件。桌面采用左侧导航、主视觉及右侧组件，平板收起侧栏，手机改为单列。跟随系统的减少动态效果设置。
 
 ## 本地预览
 
@@ -46,6 +48,8 @@ npm run dev
 ```sh
 npm run build
 npm run check
+node --test tooling/desktop.test.cjs
+node tooling/check-publishing.cjs
 ```
 
 构建结果位于 `public/`。检查会验证生成页面、内部链接、资源、基本元信息、目录锚点、搜索索引与 sitemap。
@@ -55,11 +59,12 @@ npm run check
 | 内容 | 文件 |
 | --- | --- |
 | 名称、作者、描述 | `_config.yml` |
-| 首页标语与页脚文字 | `themes/journal/_config.yml` |
+| 插画、配色、组件开关、首页文字 | `themes/journal/_config.yml` |
 | 关于我 | `source/about/index.md` |
 | 文章 | `source/_posts/*.md` |
 | 页面样式 | `themes/journal/source/css/style.css` |
 | 搜索、代码复制与目录交互 | `themes/journal/source/js/site.js` |
+| 时钟、日历、问候与随机推荐 | `themes/journal/source/js/desktop.js` |
 | 分类标签生成、搜索索引与阅读时长 | `themes/journal/scripts/reading.js` |
 | 角色与背景素材 | `themes/journal/source/images/` |
 
