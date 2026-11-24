@@ -34,6 +34,22 @@
 
 插画、署名、六个主题配色和四个组件开关集中配置于 `themes/journal/_config.yml`。将 `widgets` 下的对应项设为 `false` 可关闭该组件。桌面采用左侧导航、主视觉及右侧组件，平板收起侧栏，手机改为单列。跟随系统的减少动态效果设置。
 
+社交链接写在同一份主题配置的 `socials` 里。关于页的「找到我」、页脚和首页的 GitHub 都读这份列表。GitHub 会优先使用 `key: github` 的 `url`，没有时再回退到 `github_url`。每一项填写 `url` 或 `copy` 之一；两者都留空时自动隐藏。
+
+```yaml
+socials:
+  - key: github
+    label: GitHub
+    text: DuLuo-39
+    url: https://github.com/DuLuo-39
+  - key: qq
+    label: QQ
+    text: '1938865506'
+    copy: '1938865506'
+```
+
+`url` 渲染为链接。`mailto:` 在当前页打开，`http` 与 `https` 外链新开页面。只有 `copy` 的项显示文字和复制按钮，不会生成链接。QQ 号这类纯数字请加引号，避免被解析成数字后被隐藏。
+
 ## 本地预览
 
 使用 Node.js 24。Windows PowerShell 如果限制执行 `npm.ps1`，将以下命令的 `npm` 写成 `npm.cmd`。
@@ -59,7 +75,7 @@ node tooling/check-publishing.cjs
 | 内容 | 文件 |
 | --- | --- |
 | 名称、作者、描述 | `_config.yml` |
-| 插画、配色、组件开关、首页文字 | `themes/journal/_config.yml` |
+| 插画、配色、组件开关、社交链接、首页文字 | `themes/journal/_config.yml` |
 | 关于我 | `source/about/index.md` |
 | 文章 | `source/_posts/*.md` |
 | 页面样式 | `themes/journal/source/css/style.css` |
@@ -137,7 +153,7 @@ git push origin main
 
 无需开启 GitHub Pages，也无需配置 `hexo deploy`。构建脚本使用 `netlify.toml` 中的生产环境 `SITE_URL=https://duluo.link` 生成正式页面的绝对链接和 sitemap；部署预览使用 `DEPLOY_PRIME_URL`，并添加禁止搜索引擎收录的页面标记。
 
-线上目前仍保留示例文章和待完善的个人介绍，后续可直接替换为正式内容。
+线上目前仍保留示例文章。关于页已写上近况和联系方式，后续可以继续换成更完整的介绍。
 
 ## 接入 duluo.link
 

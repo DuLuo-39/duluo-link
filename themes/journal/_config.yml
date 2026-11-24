@@ -4,6 +4,25 @@ hero_description: 写一点代码，存一些想法。<br>在这里，慢慢收�
 footer_note: 保持好奇，下一页见。
 github_url: https://github.com/DuLuo-39
 
+# url 渲染为链接；只有 copy 的项显示为可复制文本。两者都留空则不显示。
+socials:
+  - key: github
+    label: GitHub
+    text: DuLuo-39
+    url: https://github.com/DuLuo-39
+  - key: bilibili
+    label: Bilibili
+    text: 都落ovo
+    url: https://space.bilibili.com/510647142
+  - key: qq
+    label: QQ
+    text: '1938865506'
+    copy: '1938865506'
+  - key: mail
+    label: 邮箱
+    text: 1938865506@qq.com
+    url: mailto:1938865506@qq.com
+
 artwork:
   image: /images/aemeath.webp
   width: 962

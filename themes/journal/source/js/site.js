@@ -178,4 +178,33 @@
     window.addEventListener('resize', schedule);
     updateReading();
   }
+
+  document.querySelectorAll('[data-copy-value]').forEach(button => {
+    let timer;
+    button.addEventListener('click', async () => {
+      const value = button.getAttribute('data-copy-value') || '';
+      const status = button.parentElement.querySelector('[data-copy-status]');
+      const text = button.parentElement.querySelector('.social-text');
+      clearTimeout(timer);
+      try {
+        await navigator.clipboard.writeText(value);
+        button.textContent = '已复制';
+        if (status) status.textContent = '已复制到剪贴板';
+      } catch {
+        if (text) {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+        button.textContent = '请手动复制';
+        if (status) status.textContent = '无法自动复制，内容已选中，请按 Ctrl 或 Command 加 C';
+      }
+      timer = setTimeout(() => {
+        button.textContent = '复制';
+        if (status) status.textContent = '';
+      }, 2500);
+    });
+  });
 })();

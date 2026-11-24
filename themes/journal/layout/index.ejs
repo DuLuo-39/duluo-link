@@ -16,7 +16,7 @@
       <h1 id="welcome-title">嗨，我是 <span><%= config.author %></span><i aria-hidden="true">.</i></h1>
       <p class="welcome-subtitle"><%= theme.hero_title %></p>
       <p class="greeting-description"><%- theme.hero_description %></p>
-      <div class="welcome-actions"><a class="primary-link" href="#recent-title">开始阅读 <span aria-hidden="true">↓</span></a><a class="quiet-link" href="<%= theme.github_url %>" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+      <div class="welcome-actions"><a class="primary-link" href="#recent-title">开始阅读 <span aria-hidden="true">↓</span></a><% const githubHref = journal_github_url(); if (githubHref) { %><a class="quiet-link" href="<%= githubHref %>" target="_blank" rel="noopener noreferrer">GitHub ↗</a><% } %></div>
       <span class="greeting-star" aria-hidden="true">✧</span>
     </div>
   </section>

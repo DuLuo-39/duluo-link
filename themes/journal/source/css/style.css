@@ -152,6 +152,15 @@ kbd { font:12px var(--mono); padding:3px 5px; background:#eeeaf5; border-radius:
 .prose a { color: var(--accent); text-decoration: underline; text-decoration-color: #bed7e5; text-underline-offset: 4px; }
 .prose ul, .prose ol { padding-left: 1.5em; }
 .prose li { margin-block: .25em; }
+.prose .social-list { list-style: none; padding: 0; margin: 0 0 1.4em; display: grid; gap: 8px; }
+.prose .social-list a, .prose .social-copy { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; width: fit-content; max-width: 100%; min-height: 42px; padding: 6px 12px 6px 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); line-height: 1.4; text-decoration: none; }
+.prose .social-list a:hover { color: var(--accent); border-color: #c9b7de; }
+.prose .social-list svg { width: 18px; height: 18px; color: var(--accent); }
+.prose .social-label { color: var(--muted); font-size: 13px; min-width: 4.2em; }
+.prose .social-text { font-family: var(--mono); font-size: 14px; }
+.prose .social-copy { position: relative; }
+.prose .social-copy button { border: 0; border-radius: 8px; background: #eee8f6; color: var(--accent); padding: 3px 8px; font-size: 12px; line-height: 1.4; }
+.prose .social-copy button:hover { background: #e4dcf3; }
 .prose blockquote { margin: 25px 0; padding: 16px 22px; border-left: 3px solid #b8a1cd; border-radius: 0 7px 7px 0; background: #f4f0fa; color: var(--muted); }
 .prose blockquote p:last-child { margin-bottom: 0; }
 .prose img { max-width: 100%; height: auto; border-radius: 7px; }
