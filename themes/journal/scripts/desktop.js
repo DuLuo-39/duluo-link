@@ -78,10 +78,10 @@ function renderSocialBar(theme) {
     const label = escapeHtml(item.label);
     if (item.url) {
       const external = /^https?:\/\//i.test(item.url) ? ' target="_blank" rel="noopener noreferrer"' : '';
-      return `<a class="social-chip" href="${escapeHtml(item.url)}"${external}>${icon}<span>${label}</span></a>`;
+      return `<a class="social-chip" data-magnetic href="${escapeHtml(item.url)}"${external}>${icon}<span>${label}</span></a>`;
     }
     const value = escapeHtml(item.copy);
-    return `<button class="social-chip" type="button" data-copy-value="${value}" aria-label="复制${label}：${value}">${icon}<span data-copy-label>${label}</span><span class="sr-only" role="status" data-copy-status></span></button>`;
+    return `<button class="social-chip" data-magnetic type="button" data-copy-value="${value}" aria-label="复制${label}：${value}">${icon}<span data-copy-label>${label}</span><span class="sr-only" role="status" data-copy-status></span></button>`;
   });
   return `<div class="social-bar">${chips.join('')}</div>`;
 }

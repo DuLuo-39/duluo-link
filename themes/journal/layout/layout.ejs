@@ -23,25 +23,27 @@
   <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
   <style>:root{<%- desktop_palette() %>}</style>
   <script src="<%= url_for('/js/site.js') %>" defer></script>
+  <script src="<%= url_for('/js/motion.js') %>" defer></script>
   <% if (is_home()) { %><script src="<%= url_for('/js/desktop.js') %>" defer></script><% } %>
   <% if (page.path === 'share/index.html') { %><script src="<%= url_for('/js/share.js') %>" defer></script><% } %>
   <% if (page.path === 'gallery/index.html') { %><script src="<%= url_for('/js/gallery.js') %>" defer></script><% } %>
 </head>
 <body class="<%= is_home() ? 'page-home' : 'page-inner' %>">
+  <div class="aurora-bg" aria-hidden="true"><span></span><span></span><span></span></div>
   <a class="skip-link" href="#main">跳到正文</a>
   <header class="site-header">
-    <div class="wrapper header-inner">
-      <a class="brand" href="<%= url_for('/') %>" aria-label="<%= config.title %>"><span class="brand-mark<%= theme.avatar ? ' has-avatar' : '' %>" aria-hidden="true"><% if (theme.avatar) { %><img class="brand-avatar" src="<%= url_for(theme.avatar) %>" alt=""><% } else { %>D<span>·</span><% } %></span><span>DuLuo.</span></a>
+    <div class="header-inner">
+      <a class="brand" href="<%= url_for('/') %>" aria-label="<%= config.title %>"><span class="brand-mark<%= theme.avatar ? ' has-avatar' : '' %>" aria-hidden="true"><% if (theme.avatar) { %><img class="brand-avatar" src="<%= url_for(theme.avatar) %>" alt=""><% } else { %>D.<% } %></span><span>DuLuo.</span></a>
       <% const readingNow = is_archive() || is_post() || page.taxonomy_kind === 'category' || page.taxonomy_kind === 'tag'; %>
       <nav aria-label="主导航">
-        <a href="<%= url_for('/') %>"<%- is_home() ? ' aria-current="page"' : '' %>><%- journal_icon('home') %><span>首页</span></a>
-        <a href="<%= url_for('/archives/') %>"<%- readingNow ? ' aria-current="page"' : '' %>><%- journal_icon('archive') %><span>文章</span></a>
-        <a href="<%= url_for('/projects/') %>"<%- page.path === 'projects/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('projects') %><span>项目</span></a>
-        <a href="<%= url_for('/share/') %>"<%- page.path === 'share/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('share') %><span>资源</span></a>
-        <a href="<%= url_for('/bloggers/') %>"<%- page.path === 'bloggers/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('bloggers') %><span>友链</span></a>
-        <a href="<%= url_for('/about/') %>"<%- page.path === 'about/index.html' ? ' aria-current="page"' : '' %>><%- journal_icon('about') %><span>关于</span></a>
+        <a data-magnetic href="<%= url_for('/') %>"<%- is_home() ? ' aria-current="page"' : '' %>>首页</a>
+        <a data-magnetic href="<%= url_for('/archives/') %>"<%- readingNow ? ' aria-current="page"' : '' %>>文章</a>
+        <a data-magnetic href="<%= url_for('/projects/') %>"<%- page.path === 'projects/index.html' ? ' aria-current="page"' : '' %>>项目</a>
+        <a data-magnetic href="<%= url_for('/share/') %>"<%- page.path === 'share/index.html' ? ' aria-current="page"' : '' %>>资源</a>
+        <a data-magnetic href="<%= url_for('/bloggers/') %>"<%- page.path === 'bloggers/index.html' ? ' aria-current="page"' : '' %>>友链</a>
+        <a data-magnetic href="<%= url_for('/about/') %>"<%- page.path === 'about/index.html' ? ' aria-current="page"' : '' %>>关于</a>
       </nav>
-      <button class="search-trigger" type="button" data-search-open hidden aria-haspopup="dialog" aria-controls="site-search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索</span><kbd>Ctrl K</kbd></button>
+      <button class="search-trigger" data-magnetic type="button" data-search-open hidden aria-haspopup="dialog" aria-controls="site-search" aria-label="搜索"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><kbd>Ctrl K</kbd></button>
     </div>
   </header>
   <% if (is_post()) { %><div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div><% } %>

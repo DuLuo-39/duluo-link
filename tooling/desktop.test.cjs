@@ -8,7 +8,7 @@ test('Beijing time rolls over at UTC 16:00, including month and year boundaries'
   assert.deepEqual(beijingTime(new Date('2026-09-30T16:00:00Z')), { year:2026, month:10, day:1, hour:0, minute:'00', weekday:'四' });
 });
 test('greetings switch at each defined boundary', () => {
-  for (const [hour, expected] of [[0,'夜深'],[5,'夜深'],[6,'早上'],[10,'早上'],[11,'中午'],[13,'中午'],[14,'下午'],[17,'下午'],[18,'晚上'],[23,'晚上']]) assert.ok(greeting(hour).startsWith(expected));
+  for (const [hour, expected] of [[0,'夜半微光'],[5,'夜半微光'],[6,'晨雾未散'],[10,'晨雾未散'],[11,'正午静流'],[13,'正午静流'],[14,'午后漂移'],[17,'午后漂移'],[18,'日暮余晖'],[23,'日暮余晖']]) assert.equal(greeting(hour), expected);
 });
 test('calendar begins Monday and pads all weeks, including six-week months', () => {
   const september = calendarDays(2026, 9);

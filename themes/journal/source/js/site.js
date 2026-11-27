@@ -230,6 +230,7 @@
       const status = button.querySelector('[data-copy-status]') || (button.parentElement && button.parentElement.querySelector('[data-copy-status]'));
       const text = button.parentElement.querySelector('.social-text');
       clearTimeout(timer);
+      button.setAttribute('data-copy-feedback', '');
       try {
         await navigator.clipboard.writeText(value);
         surface.textContent = '已复制';
@@ -246,6 +247,7 @@
         if (status) status.textContent = `无法自动复制，请手动复制 ${label ? original + ': ' + value : value}`;
       }
       timer = setTimeout(() => {
+        button.removeAttribute('data-copy-feedback');
         surface.textContent = original;
         if (status) status.textContent = '';
       }, 2500);

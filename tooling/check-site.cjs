@@ -3,7 +3,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 
 const output = path.resolve('public');
-const required = ['index.html', 'about/index.html', 'archives/index.html', 'categories/index.html', 'tags/index.html', 'share/index.html', 'projects/index.html', 'bloggers/index.html', 'gallery/index.html', '404.html', 'css/style.css', 'js/site.js', 'js/desktop.js', 'search.json', 'recommendations.json', 'favicon.svg', 'sitemap.xml'];
+const required = ['index.html', 'about/index.html', 'archives/index.html', 'categories/index.html', 'tags/index.html', 'share/index.html', 'projects/index.html', 'bloggers/index.html', 'gallery/index.html', '404.html', 'css/style.css', 'js/site.js', 'js/desktop.js', 'js/motion.js', 'search.json', 'recommendations.json', 'favicon.svg', 'sitemap.xml'];
 for (const file of required) assert.ok(fs.existsSync(path.join(output, file)), `Missing output: ${file}`);
 
 function walk(directory) {

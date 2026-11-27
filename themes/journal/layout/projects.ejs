@@ -8,7 +8,7 @@
   <% if (items.length) { %>
   <div class="project-grid">
     <% items.forEach(function(item) { %>
-    <article class="project-card glass<%= item.highlight ? ' is-highlight' : '' %>">
+    <article class="project-card glass<%= item.highlight ? ' is-highlight' : '' %>" data-tilt data-reveal>
       <div class="project-card-top">
         <span class="project-status"><%= item.status %></span>
       </div>

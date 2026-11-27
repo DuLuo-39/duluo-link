@@ -8,7 +8,7 @@
   <% if (items.length) { %>
   <div class="blogger-grid">
     <% items.forEach(function(item) { %>
-    <a class="blogger-card glass" href="<%= item.url %>" target="_blank" rel="noopener noreferrer">
+    <a class="blogger-card glass" data-tilt data-reveal href="<%= item.url %>" target="_blank" rel="noopener noreferrer">
       <span class="blogger-avatar" aria-hidden="true"><% if (item.avatar) { %><img src="<%= item.avatar %>" alt=""><% } else { %><%= item.avatar_text %><% } %></span>
       <div class="blogger-body">
         <% if (item.tag) { %><span class="share-badge"><%= item.tag %></span><% } %>

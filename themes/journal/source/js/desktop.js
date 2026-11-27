@@ -8,11 +8,11 @@
     return { year: Number(parts.year), month: Number(parts.month), day: Number(parts.day), hour: Number(parts.hour), minute: parts.minute, weekday: weekdays[new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day))).getUTCDay()] };
   }
   function greeting(hour) {
-    if (hour < 6) return '夜深了，记得好好休息';
-    if (hour < 11) return '早上好，今天也要保持好奇';
-    if (hour < 14) return '中午好，给自己一点放松时间';
-    if (hour < 18) return '下午好，很高兴遇见你';
-    return '晚上好';
+    if (hour < 6) return '夜半微光';
+    if (hour < 11) return '晨雾未散';
+    if (hour < 14) return '正午静流';
+    if (hour < 18) return '午后漂移';
+    return '日暮余晖';
   }
   function calendarDays(year, month) {
     const offset = (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7;
@@ -52,7 +52,7 @@
     if (clock) {
       clock.textContent = `${String(date.hour).padStart(2, '0')}:${date.minute}`;
       clock.dateTime = `${dayKey}T${clock.textContent}:00+08:00`;
-      clockDate.textContent = `${date.year} / ${String(date.month).padStart(2, '0')} / ${String(date.day).padStart(2, '0')} · 周${date.weekday}`;
+      if (clockDate) clockDate.textContent = `${String(date.month).padStart(2, '0')}.${String(date.day).padStart(2, '0')} · 周${date.weekday}`;
     }
     if (hello) hello.textContent = greeting(date.hour);
     if (calendar && renderedDay !== dayKey) {
@@ -88,6 +88,25 @@
     updateTime();
     setInterval(() => { if (!document.hidden) updateTime(); }, 15000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) updateTime(); });
+  }
+
+  const calendarToggle = document.querySelector('[data-calendar-toggle]');
+  const calendarPanel = document.getElementById('stage-calendar');
+  if (calendarToggle && calendarPanel) {
+    function setCalendarOpen(open) {
+      calendarPanel.hidden = !open;
+      calendarToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    calendarToggle.addEventListener('click', event => {
+      event.stopPropagation();
+      setCalendarOpen(calendarPanel.hidden);
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !calendarPanel.hidden) setCalendarOpen(false);
+    });
+    document.addEventListener('click', event => {
+      if (!calendarPanel.hidden && !calendarPanel.contains(event.target) && !calendarToggle.contains(event.target)) setCalendarOpen(false);
+    });
   }
 
   const card = document.querySelector('[data-random-post]');
@@ -147,7 +166,8 @@
       function setPlaying(playing) {
         toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
         toggle.setAttribute('aria-label', playing ? '暂停' : '播放');
-        toggle.textContent = playing ? '暂停' : '播放';
+        toggle.textContent = playing ? 'Ⅱ' : '▶';
+        player.classList.toggle('is-playing', playing);
       }
       function showError() {
         if (error) error.hidden = false;
@@ -194,43 +214,87 @@
     }
   }
 
-  const artwork = document.querySelector('[data-artwork-switch]');
+  const moodFallbacks = ['#f6dfeb', '#e9e2f7', '#ddedf7'];
+  function paintMood(mood) {
+    const colors = Array.isArray(mood) ? mood : [];
+    const root = document.documentElement;
+    [0, 1, 2].forEach(slot => {
+      const value = typeof colors[slot] === 'string' ? colors[slot].trim() : '';
+      root.style.setProperty(`--mood-${slot + 1}`, /^#[\da-f]{6}$/i.test(value) ? value : moodFallbacks[slot]);
+    });
+  }
+  const artwork = document.querySelector('[data-artwork]');
   if (artwork) {
     let pieces = [];
-    try { pieces = JSON.parse(artwork.querySelector('[data-artwork-data]').textContent || '[]'); }
+    try { pieces = JSON.parse((artwork.querySelector('[data-artwork-data]') || {}).textContent || '[]'); }
     catch { pieces = []; }
-    if (pieces.length > 1) {
+    if (pieces[0]) paintMood(pieces[0].mood);
+    if (artwork.hasAttribute('data-artwork-switch') && pieces.length > 1) {
       let index = 0;
       const image = artwork.querySelector('[data-artwork-image]');
       const source = artwork.querySelector('[data-artwork-source]');
-      const name = artwork.querySelector('[data-artwork-name]');
+      const title = artwork.querySelector('[data-artwork-title]');
       const character = artwork.querySelector('[data-artwork-character]');
       const series = artwork.querySelector('[data-artwork-series]');
+      const seriesWrap = artwork.querySelector('[data-artwork-series-wrap]');
       const artist = artwork.querySelector('[data-artwork-artist]');
       const counter = artwork.querySelector('[data-artwork-index]');
+      const pad = value => String(value).padStart(2, '0');
+      let fadeId = 0;
       function showArtwork(nextIndex) {
         const count = pieces.length;
+        if (count < 2 || !image) return;
         index = ((nextIndex % count) + count) % count;
         const item = pieces[index];
-        image.src = item.image;
-        image.alt = item.alt || item.title || '';
-        if (item.width) image.width = item.width;
-        if (item.height) image.height = item.height;
-        source.href = item.source_url || item.image;
-        source.setAttribute('aria-label', `查看《${item.title || item.character || '插画'}》原作`);
-        name.textContent = item.name_en || '';
-        character.textContent = item.character || '';
-        const seriesWrap = artwork.querySelector('[data-artwork-series-wrap]');
-        if (series) series.textContent = item.series || '';
-        if (seriesWrap) seriesWrap.hidden = !item.series;
-        artist.href = item.source_url || item.image;
-        const credit = item.artist_handle || item.artist || '';
-        artist.textContent = credit ? `Illustration by ${credit} ↗` : '原作 ↗';
-        counter.textContent = `${index + 1} / ${count}`;
+        const render = () => {
+          image.src = item.image;
+          image.alt = item.alt || item.title || '';
+          if (item.width) image.width = item.width;
+          if (item.height) image.height = item.height;
+          source.href = item.source_url || item.image;
+          source.setAttribute('aria-label', `查看《${item.title || item.character || '插画'}》原作`);
+          if (title) title.textContent = item.title ? `《${item.title}》` : (item.character || '插画');
+          if (character) character.textContent = item.character || '';
+          if (series) series.textContent = item.series || '';
+          if (seriesWrap) seriesWrap.hidden = !item.series;
+          const credit = item.artist_handle || item.artist || '';
+          artist.href = item.artist_url || item.source_url || item.image;
+          artist.textContent = credit ? `${credit} ↗` : '原作 ↗';
+          if (counter) counter.textContent = `${pad(index + 1)} / ${pad(count)}`;
+          paintMood(item.mood);
+        };
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) { render(); return; }
+        const id = ++fadeId;
+        let settled = false;
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          image.removeEventListener('transitionend', onEnd);
+          if (id !== fadeId) return;
+          render();
+          image.classList.remove('is-leaving');
+        };
+        const onEnd = event => {
+          if (event.target === image && (event.propertyName === 'opacity' || event.propertyName === 'transform')) finish();
+        };
+        image.addEventListener('transitionend', onEnd);
+        image.classList.remove('is-leaving');
+        void image.offsetWidth;
+        image.classList.add('is-leaving');
+        setTimeout(finish, 360);
       }
       artwork.addEventListener('click', event => {
         if (event.target.closest('[data-artwork-prev]')) showArtwork(index - 1);
         if (event.target.closest('[data-artwork-next]')) showArtwork(index + 1);
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        if (pieces.length < 2) return;
+        const active = document.activeElement;
+        if (active && active.closest('input, textarea, select, dialog[open], [contenteditable="true"]')) return;
+        event.preventDefault();
+        showArtwork(index + (event.key === 'ArrowRight' ? 1 : -1));
       });
     }
   }

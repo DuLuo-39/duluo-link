@@ -11,7 +11,7 @@
   <% if (published.length) { %>
   <div class="gallery-grid">
     <% published.forEach(function(item, index) { %>
-    <article class="gallery-frame glass">
+    <article class="gallery-frame glass" data-tilt data-reveal>
       <a class="gallery-open" href="<%= item.source_url || item.image %>" target="_blank" rel="noopener noreferrer" data-gallery-open="<%= index %>" aria-label="查看《<%= item.title || item.character %>》">
         <img src="<%= item.image %>" alt="<%= item.alt %>"<% if (item.width) { %> width="<%= item.width %>"<% } %><% if (item.height) { %> height="<%= item.height %>"<% } %> loading="lazy">
       </a>

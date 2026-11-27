@@ -47,7 +47,7 @@
           <h2 class="timeline-year-label"><%= year %></h2>
           <div class="timeline-track">
       <% } %>
-      <article class="timeline-card glass" data-year="<%= year %>" data-categories="<%= JSON.stringify(categories.map(category => category.name)) %>">
+      <article class="timeline-card glass" data-reveal data-year="<%= year %>" data-categories="<%= JSON.stringify(categories.map(category => category.name)) %>">
         <span class="timeline-node" aria-hidden="true"></span>
         <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'MM.DD') %></time>
         <div class="timeline-body">
