@@ -44,3 +44,63 @@ items:
       - '#e9e2f7'
       - '#ddedf7'
     note: 最初的桌面风景。
+  - image: /images/gallery/persimmon-tree.webp
+    width: 1024
+    height: 576
+    title: 柿子树下
+    character: 猫猫 & 壬氏
+    name_en: PERSIMMON
+    series: 药屋少女的呢喃
+    platform: other
+    tags: ['暖色调', '收藏壁纸']
+    artist: ''
+    artist_handle: ''
+    source_url: ''
+    artist_url: ''
+    alt: 柿子树上吃柿子的猫猫与树下扛梯子的壬氏极简插画
+    featured: true
+    mood:
+      - '#f8e6cf'
+      - '#e4eedb'
+      - '#e1e2f4'
+    note: 暖秋与留白，安静又好笑的一幕。
+  - image: /images/gallery/ao-to-natsu.webp
+    width: 1024
+    height: 576
+    title: 青と夏
+    character: ''
+    name_en: AO TO NATSU
+    series: ''
+    platform: other
+    tags: ['夏日', '收藏壁纸']
+    artist: ''
+    artist_handle: ''
+    source_url: ''
+    artist_url: ''
+    alt: 晴空天台与涂鸦颜料的夏日群像插画《青と夏》
+    featured: true
+    mood:
+      - '#cbe9ff'
+      - '#d5f2f4'
+      - '#fce0ea'
+    note: 天台、蓝天与溅起颜料的夏天。
+  - image: /images/gallery/flower-crown.webp
+    width: 1024
+    height: 576
+    title: 花冠与晴光
+    character: ''
+    name_en: SUNLIT CROWN
+    series: ''
+    platform: other
+    tags: ['晴蓝', '收藏壁纸']
+    artist: ''
+    artist_handle: ''
+    source_url: ''
+    artist_url: ''
+    alt: 戴着蓝白花冠、在斑驳晴光下眯眼微笑的蓝发少女插画
+    featured: true
+    mood:
+      - '#d4ecff'
+      - '#fce0e6'
+      - '#faedd4'
+    note: 斑驳日影落在脸颊上的晴朗瞬间。

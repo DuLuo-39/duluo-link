@@ -42,7 +42,7 @@ artwork:
 
 # 可选头像。把图片放到 themes/journal/source/images/avatar.webp，
 # 这里写成 /images/avatar.webp 即可。留空则继续显示字母徽章。
-avatar: ''
+avatar: '/images/avatar.webp'
 
 # 使用十六进制颜色；由主题统一生成 CSS 变量。
 palette:
