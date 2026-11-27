@@ -68,4 +68,13 @@ widgets:
 #       artist: DuLuo
 #       src: /audio/night.mp3
 music:
-  tracks: []
+  tracks:
+    - title: サンタは中央線でやってくる
+      artist: しゃろう
+      src: /audio/santa-chuo-line.mp3
+    - title: Morning Routine
+      artist: Ghostrifter Official
+      src: /audio/morning-routine.mp3
+    - title: Day Off
+      artist: Tokyo Music Walker
+      src: /audio/day-off.mp3

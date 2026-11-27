@@ -24,6 +24,8 @@ description: DuLuo. — 技术笔记、项目、资源与光影收藏。
 
 桌面布局参考 [lvy-neko](https://lvyovo-wiki.tech/)。
 
+桌面 BGM 收录 **しゃろう**《サンタは中央線でやってくる》（DOVA-SYNDROME），以及 **Ghostrifter Official**《Morning Routine》、**Tokyo Music Walker**《Day Off》（CC BY 3.0，via [Chosic](https://www.chosic.com/free-music/lofi/)）。
+
 画面与角色版权归各自权利方所有，与作品官方没有关联。
 
 插画 © / /；《鸣潮》角色与作品相关权利归库洛游戏及相应权利方所有。
