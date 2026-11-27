@@ -64,6 +64,17 @@ test('platform is inferred from x.com, twitter.com and pixiv.net', () => {
   assert.equal(normalizeArtwork({ image: '/a.webp', platform: 'x', source_url: 'https://www.pixiv.net/artworks/1' }).platform, 'x');
   assert.equal(normalizeArtwork({ image: '/a.webp', platform: 'other', source_url: 'https://x.com/a/status/1' }).platform, 'other');
 });
+
+test('gallery facets combine sources and trimmed string tags without duplicate buttons', () => {
+  const x = { image:'/a.webp', platform:'x', tags:[' X ', '静谧', null, '静谧', ' ', 1] };
+  const pixiv = { image:'/b.webp', platform:'pixiv', tags:['粉紫'] };
+  const gallery = normalizeGallery({ items:[x, pixiv] });
+  assert.deepEqual(gallery.items[0].tags, ['X', '静谧']);
+  assert.deepEqual(gallery.filters, ['X', '静谧', 'Pixiv', '粉紫']);
+  assert.deepEqual(normalizeGallery({ items:[x] }).filters, []);
+  assert.deepEqual(normalizeGallery({ items:[{...x, tags:'X'}, {...pixiv, tags:[]}] }).filters, []);
+  assert.deepEqual(normalizeGallery({ items:[{...x, tags:['X']}, {...x, tags:[]}] }).filters, []);
+});
 test('x artist_handle derives the profile url and drops illegal handles', () => {
   const derived = normalizeArtwork({ image: '/a.webp', platform: 'x', artist_handle: '@DuLuo_39' });
   assert.equal(derived.artist_handle, '@DuLuo_39');

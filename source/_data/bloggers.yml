@@ -1,7 +1,6 @@
 # 优秀博客。只改这一份列表，重新构建后就会出现在 /bloggers/。
 title: 优秀博客
 eyebrow: BLOGROLL
-description: 友链。
 items:
   - name: lvy-neko
     url: https://lvyovo-wiki.tech/

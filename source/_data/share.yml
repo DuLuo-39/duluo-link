@@ -1,6 +1,6 @@
 # 推荐分享。只改这一份列表，重新构建后就会出现在 /share/。
 title: 推荐分享
-eyebrow: RESOURCE WIKI
+eyebrow: RESOURCES
 description: 文档与工具。
 items:
   - name: Hexo 官方文档

@@ -20,6 +20,9 @@
   <meta property="og:site_name" content="<%= config.title %>">
   <meta property="og:locale" content="zh_CN">
   <link rel="icon" type="image/svg+xml" href="<%= url_for('/favicon.svg') %>">
+  <link rel="preconnect" href="https://fonts.googleapis.cn" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.cn/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.cn/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;display=swap"></noscript>
   <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
   <style>:root{<%- desktop_palette() %>}</style>
   <script src="<%= url_for('/js/site.js') %>" defer></script>
@@ -29,7 +32,8 @@
   <% if (page.path === 'gallery/index.html') { %><script src="<%= url_for('/js/gallery.js') %>" defer></script><% } %>
 </head>
 <body class="<%= is_home() ? 'page-home' : 'page-inner' %>">
-  <div class="aurora-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="aurora-bg" aria-hidden="true"><span></span><span></span><span></span><span class="aurora-pointer"></span></div>
+  <canvas class="ambient-canvas" aria-hidden="true"></canvas>
   <a class="skip-link" href="#main">跳到正文</a>
   <header class="site-header">
     <div class="header-inner">

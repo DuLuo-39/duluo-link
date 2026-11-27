@@ -97,6 +97,8 @@ function normalizeArtwork(entry) {
     name_en: galleryText(entry.name_en),
     series: galleryText(entry.series),
     platform,
+    platformLabel: platform === 'x' ? 'X' : (platform === 'pixiv' ? 'Pixiv' : (galleryHttp(entry.source_url) ? '其他来源' : '')),
+    tags: Array.isArray(entry.tags) ? [...new Set(entry.tags.map(galleryText).filter(Boolean))] : [],
     artist: galleryText(entry.artist),
     artist_handle,
     source_url: galleryHttp(entry.source_url),
@@ -115,11 +117,14 @@ function normalizeGallery(source, fallbackArtwork) {
     return item ? [item] : [];
   });
   const fallback = normalizeArtwork(fallbackArtwork);
+  if (!items.length && fallback) items.push({ ...fallback, featured:true });
+  const labels = [...new Set(items.flatMap(item => [item.platformLabel, ...item.tags]).filter(Boolean))];
   return {
     title: galleryText(data.title) || '画廊',
     eyebrow: galleryText(data.eyebrow) || 'GALLERY',
     description: galleryText(data.description) || '收集来自 X 与 Pixiv 的光影与线条。',
-    items: items.length ? items : (fallback ? [{ ...fallback, featured: true }] : [])
+    items,
+    filters: items.length > 1 && labels.length > 1 && items.some(item => item.tags.length) ? labels : []
   };
 }
 
@@ -140,67 +145,124 @@ function galleryStep(current, total, step) {
 
 if (typeof module === 'object' && module.exports) module.exports = { normalizeGallery, featuredArtworks, galleryStep, normalizeArtwork };
 
-if (typeof document !== 'undefined') {
-  const galleryPage = document.querySelector('[data-gallery-page]');
-  const dialog = galleryPage && galleryPage.querySelector('[data-gallery-dialog]');
-  const dataNode = document.getElementById('gallery-data');
-  if (galleryPage && dialog && dataNode && typeof dialog.showModal === 'function') {
-    let items = [];
-    try { items = JSON.parse(dataNode.textContent || '[]'); }
-    catch { items = []; }
-    let index = 0;
-    const image = dialog.querySelector('[data-gallery-image]');
-    const title = dialog.querySelector('[data-gallery-title]');
-    const note = dialog.querySelector('[data-gallery-note]');
-    const source = dialog.querySelector('[data-gallery-source]');
-    const artist = dialog.querySelector('[data-gallery-artist]');
-    const credit = dialog.querySelector('[data-gallery-credit]');
-    const previous = dialog.querySelector('[data-gallery-prev]');
-    const next = dialog.querySelector('[data-gallery-next]');
-    function show(nextIndex) {
-      if (!items.length) return;
-      index = galleryStep(nextIndex, items.length, 0);
-      const item = items[index];
-      image.src = item.image;
-      image.alt = item.alt || item.title || '';
-      title.textContent = item.title ? `《${item.title}》` : item.character || '插画';
-      credit.textContent = [item.character, item.series].filter(Boolean).join(' · ');
-      note.textContent = item.note || '';
-      note.hidden = !item.note;
-      source.hidden = !item.source_url;
-      if (item.source_url) {
-        source.href = item.source_url;
-        source.textContent = sourceLabel(item.platform);
-      }
-      artist.hidden = !item.artist_url;
-      if (item.artist_url) {
-        artist.href = item.artist_url;
-        artist.textContent = `${item.artist || item.artist_handle || '画师'} ↗`;
-      }
-      const single = items.length < 2;
-      previous.disabled = single;
-      next.disabled = single;
+function initGallery(page) {
+  const dialog = page.querySelector('[data-gallery-dialog]');
+  if (!dialog) return;
+  const items = JSON.parse(page.querySelector('#gallery-data').textContent);
+  const frames = [...page.querySelectorAll('.gallery-frame')];
+  const filters = page.querySelector('[data-gallery-filters]');
+  const count = page.querySelector('[data-gallery-count]');
+  let visible = items.map((_, index) => index);
+  let position = 0;
+
+  function setMood(item) {
+    const style = document.documentElement.style;
+    for (let slot = 0; slot < 3; slot++) {
+      const key = `--mood-${slot + 1}`;
+      if (item?.mood[slot]) style.setProperty(key, item.mood[slot]);
+      else style.removeProperty(key);
     }
-    function open(nextIndex) {
-      show(nextIndex);
-      if (!dialog.open) dialog.showModal();
-    }
-    galleryPage.addEventListener('click', event => {
-      const opener = event.target.closest('[data-gallery-open]');
-      if (opener && galleryPage.contains(opener)) {
-        event.preventDefault();
-        open(Number(opener.dataset.galleryOpen));
-        return;
+  }
+
+  if (filters) {
+    filters.hidden = false;
+    filters.addEventListener('click', event => {
+      const button = event.target.closest('[data-filter]');
+      if (!button) return;
+      const label = button.dataset.filter;
+      visible = items.flatMap((item, index) => {
+        const match = !label || item.platformLabel === label || item.tags.includes(label);
+        frames[index].hidden = !match;
+        return match ? [index] : [];
+      });
+      for (const option of filters.querySelectorAll('button')) {
+        option.setAttribute('aria-pressed', String(option === button));
       }
-      if (event.target.closest('[data-gallery-close]')) dialog.close();
-      if (items.length >= 2 && event.target.closest('[data-gallery-prev]')) show(galleryStep(index, items.length, -1));
-      if (items.length >= 2 && event.target.closest('[data-gallery-next]')) show(galleryStep(index, items.length, 1));
-      if (event.target === dialog) dialog.close();
-    });
-    dialog.addEventListener('keydown', event => {
-      if (items.length < 2) return;
-      if (event.key === 'ArrowLeft') { event.preventDefault(); show(galleryStep(index, items.length, -1)); }
-      if (event.key === 'ArrowRight') { event.preventDefault(); show(galleryStep(index, items.length, 1)); }
+      count.textContent = `共 ${visible.length} 幅`;
+      setMood();
     });
   }
+
+  frames.forEach((frame, index) => {
+    frame.addEventListener('pointerenter', event => {
+      if (event.pointerType === 'mouse' && !dialog.open) setMood(items[index]);
+    });
+    frame.addEventListener('pointerleave', () => { if (!dialog.open) setMood(); });
+  });
+
+  if (typeof dialog.showModal !== 'function') return;
+  const image = dialog.querySelector('[data-gallery-image]');
+  const title = dialog.querySelector('[data-gallery-title]');
+  const credit = dialog.querySelector('[data-gallery-credit]');
+  const note = dialog.querySelector('[data-gallery-note]');
+  const source = dialog.querySelector('[data-gallery-source]');
+  const artist = dialog.querySelector('[data-gallery-artist]');
+  const previous = dialog.querySelector('[data-gallery-prev]');
+  const next = dialog.querySelector('[data-gallery-next]');
+  const counter = dialog.querySelector('[data-gallery-index]');
+  function link(element, href, label) {
+    element.hidden = !href;
+    if (href) element.href = href;
+    else element.removeAttribute('href');
+    element.textContent = label;
+  }
+  function show(at) {
+    position = galleryStep(at, visible.length, 0);
+    const item = items[visible[position]];
+    image.src = item.image;
+    image.alt = item.alt || item.character || '';
+    title.textContent = item.title || item.character || '未题名';
+    credit.textContent = [item.artist_handle || item.artist, item.series, item.platformLabel].filter(Boolean).join(' · ');
+    credit.hidden = !credit.textContent;
+    note.textContent = item.note;
+    note.hidden = !item.note;
+    link(source, item.source_url, sourceLabel(item.platform));
+    link(artist, item.artist_url, '画师主页 ↗');
+    counter.textContent = [position + 1, visible.length].map(n => String(n).padStart(2, '0')).join(' / ');
+    previous.hidden = next.hidden = visible.length < 2;
+    setMood(item);
+  }
+
+  page.addEventListener('click', event => {
+    const opener = event.target.closest('[data-gallery-open]');
+    if (!opener || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const at = visible.indexOf(Number(opener.dataset.galleryOpen));
+    if (at < 0) return;
+    dialog.showModal();
+    show(at);
+  });
+  previous.addEventListener('click', () => show(position - 1));
+  next.addEventListener('click', () => show(position + 1));
+  dialog.querySelector('[data-gallery-close]').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('close', () => { touch = null; setMood(); });
+  dialog.addEventListener('keydown', event => {
+    if (visible.length < 2 || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    show(position + (event.key === 'ArrowLeft' ? -1 : 1));
+  });
+
+  const stage = dialog.querySelector('.gallery-lightbox-stage');
+  let touch = null;
+  stage.addEventListener('pointerdown', event => {
+    if (event.pointerType !== 'touch' || visible.length < 2) return;
+    touch = event.isPrimary ? { id:event.pointerId, x:event.clientX, y:event.clientY } : null;
+  });
+  stage.addEventListener('pointercancel', () => { touch = null; });
+  stage.addEventListener('pointerup', event => {
+    if (!touch || touch.id !== event.pointerId) return;
+    const dx = event.clientX - touch.x, dy = event.clientY - touch.y;
+    touch = null;
+    if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      show(position + (dx < 0 ? 1 : -1));
+    }
+  });
+}
+
+if (typeof document !== 'undefined') {
+  const page = document.querySelector('[data-gallery-page]');
+  if (page) initGallery(page);
 }

@@ -1,4 +1,4 @@
-<article class="post-card">
+<article class="post-card" data-reveal>
   <div class="post-meta"><% if (post.categories.length) { const category = post.categories.toArray().at(-1); %><a class="category-label" href="<%= url_for(category.path) %>"><%= category.name %></a><% } else { %><span class="category-label">随手记录</span><% } %><time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY.MM.DD') %></time></div>
   <h3><a href="<%= url_for(post.path) %>"><%= post.title %></a></h3>
   <p><%= post.description || truncate(strip_html(post.excerpt || post.content), { length: 120 }) %></p>

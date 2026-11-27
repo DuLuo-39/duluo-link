@@ -1,8 +1,7 @@
 <section class="archive-page">
   <header class="archive-header">
-    <p class="eyebrow">THE ARCHIVE</p>
+    <p class="eyebrow">ARCHIVE</p>
     <h1>文章归档</h1>
-    <p>笔记。</p>
   </header>
   <% const posts = page.posts ? (typeof page.posts.toArray === 'function' ? page.posts.toArray() : Array.from(page.posts)) : []; %>
   <% const years = []; const categoryNames = []; %>

@@ -3,9 +3,16 @@ const assert = require('node:assert/strict');
 const { beijingTime, greeting, calendarDays, pickPost, formatDuration, nextTrackIndex } = require('../themes/journal/source/js/desktop.js');
 
 test('Beijing time rolls over at UTC 16:00, including month and year boundaries', () => {
-  assert.deepEqual(beijingTime(new Date('2026-12-31T15:59:59Z')), { year:2026, month:12, day:31, hour:23, minute:'59', weekday:'四' });
-  assert.deepEqual(beijingTime(new Date('2026-12-31T16:00:00Z')), { year:2027, month:1, day:1, hour:0, minute:'00', weekday:'五' });
-  assert.deepEqual(beijingTime(new Date('2026-09-30T16:00:00Z')), { year:2026, month:10, day:1, hour:0, minute:'00', weekday:'四' });
+  assert.deepEqual(beijingTime(new Date('2026-12-31T15:59:59Z')), { year:2026, month:12, day:31, hour:23, minute:'59', second:'59', weekday:'四' });
+  assert.deepEqual(beijingTime(new Date('2026-12-31T16:00:00Z')), { year:2027, month:1, day:1, hour:0, minute:'00', second:'00', weekday:'五' });
+  assert.deepEqual(beijingTime(new Date('2026-09-30T16:00:00Z')), { year:2026, month:10, day:1, hour:0, minute:'00', second:'00', weekday:'四' });
+});
+test('Beijing seconds roll into the next minute and keep leading zeroes', () => {
+  for (const [utc, minute, second] of [['02:14:59','14','59'], ['02:15:00','15','00'], ['02:15:07','15','07']]) {
+    const parts = beijingTime(new Date(`2026-10-01T${utc}Z`));
+    assert.equal(parts.minute, minute);
+    assert.equal(parts.second, second);
+  }
 });
 test('greetings switch at each defined boundary', () => {
   for (const [hour, expected] of [[0,'夜半微光'],[5,'夜半微光'],[6,'晨雾未散'],[10,'晨雾未散'],[11,'正午静流'],[13,'正午静流'],[14,'午后漂移'],[17,'午后漂移'],[18,'日暮余晖'],[23,'日暮余晖']]) assert.equal(greeting(hour), expected);

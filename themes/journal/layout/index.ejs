@@ -35,15 +35,13 @@
       <% if (widgets.clock !== false) { %>
         <% if (widgets.calendar !== false) { %>
         <button class="stage-clock" type="button" data-calendar-toggle aria-expanded="false" aria-controls="stage-calendar">
-          <time data-clock class="stage-digits">--:--</time>
-          <span data-clock-date>时间正在路上</span>
-        </button>
+          <span class="sr-only">北京时间，展开或收起日历</span>
         <% } else { %>
         <div class="stage-clock">
-          <time data-clock class="stage-digits">--:--</time>
-          <span data-clock-date>时间正在路上</span>
-        </div>
         <% } %>
+          <time data-clock class="stage-digits"><span class="clock-main">--:--</span><span class="clock-sec">:--</span></time>
+          <span><span data-clock-date>时间正在路上</span><span class="clock-zone">UTC+8</span></span>
+        <% if (widgets.calendar !== false) { %></button><% } else { %></div><% } %>
         <noscript><p>启用 JavaScript 查看实时时间。</p></noscript>
       <% } %>
       <% if (widgets.calendar !== false) { %>

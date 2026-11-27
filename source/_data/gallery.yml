@@ -9,6 +9,7 @@
 #   name_en: ''
 #   series: ''
 #   platform: x
+#   tags: ['粉紫', '静谧']
 #   artist: ''
 #   artist_handle: '@handle' # 未填 artist_url 时推导为 https://x.com/handle
 #   source_url: https://x.com/handle/status/1234567890
@@ -31,6 +32,7 @@ items:
     name_en: AEMEATH
     series: 鸣潮
     platform: pixiv # 支持 x / pixiv / other，可省略由 source_url 自动推断
+    tags: ['粉紫', '静谧']
     artist: / /
     artist_handle: '' # X 画师可填 '@handle'，未填 artist_url 时自动推导 https://x.com/handle
     source_url: https://www.pixiv.net/artworks/141188192

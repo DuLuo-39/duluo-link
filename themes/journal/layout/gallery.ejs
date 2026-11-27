@@ -1,45 +1,58 @@
-<% const items = Array.isArray(page.items) ? page.items : []; %>
-<% function artworkSourceLabel(platform) { return platform === 'x' ? 'X 原推 ↗' : (platform === 'pixiv' ? 'Pixiv 原作 ↗' : '查看原作 ↗'); } %>
-<% const published = items.map(item => ({ title: item.title, character: item.character, name_en: item.name_en, series: item.series, artist: item.artist, artist_handle: item.artist_handle, platform: item.platform, mood: item.mood, source_url: item.source_url, artist_url: item.artist_url, alt: item.alt, note: item.note, width: item.width, height: item.height, image: /^https?:\/\//i.test(item.image) ? item.image : url_for(item.image) })); %>
+<%
+  const published = (page.items || []).map(item => ({ ...item, image: /^https?:\/\//i.test(item.image) ? item.image : url_for(item.image) }));
+  const filters = page.filters || [];
+%>
 <section class="gallery-page" data-gallery-page>
-  <header class="archive-header">
-    <p class="eyebrow"><%= page.eyebrow || 'GALLERY' %></p>
-    <h1><%= page.title || '画廊' %></h1>
-    <% if (page.description) { %><p><%= page.description %></p><% } %>
-    <p class="gallery-count">共 <%= published.length %> 张</p>
+  <header class="archive-header gallery-header">
+    <div>
+      <p class="eyebrow"><%= page.eyebrow || 'GALLERY' %></p>
+      <h1><%= page.title || '画廊' %></h1>
+      <% if (page.description) { %><p class="gallery-intro"><%= page.description %></p><% } %>
+    </div>
+    <span class="gallery-count" role="status" data-gallery-count>共 <%= published.length %> 幅</span>
   </header>
   <% if (published.length) { %>
-  <div class="gallery-grid">
-    <% published.forEach(function(item, index) { %>
+  <% if (filters.length) { %>
+  <div class="gallery-filters" role="group" aria-label="按来源或标签筛选" data-gallery-filters hidden>
+    <button type="button" class="archive-pill" data-filter="" aria-pressed="true">全部</button>
+    <% filters.forEach(label => { %><button type="button" class="archive-pill" data-filter="<%= label %>" aria-pressed="false"><%= label %></button><% }); %>
+  </div>
+  <% } %>
+  <div class="gallery-grid<%= published.length === 1 ? ' gallery-solo' : '' %>">
+    <% published.forEach((item, index) => { const title = item.title || item.character || '未题名'; const credit = item.artist_handle || item.artist; %>
     <article class="gallery-frame glass" data-tilt data-reveal>
-      <a class="gallery-open" href="<%= item.source_url || item.image %>" target="_blank" rel="noopener noreferrer" data-gallery-open="<%= index %>" aria-label="查看《<%= item.title || item.character %>》">
-        <img src="<%= item.image %>" alt="<%= item.alt %>"<% if (item.width) { %> width="<%= item.width %>"<% } %><% if (item.height) { %> height="<%= item.height %>"<% } %> loading="lazy">
+      <a class="gallery-open" href="<%= item.source_url || item.image %>" target="_blank" rel="noopener noreferrer" data-gallery-open="<%= index %>" aria-label="查看《<%= title %>》">
+        <img src="<%= item.image %>" alt="<%= item.alt %>"<% if (item.width && item.height) { %> width="<%= item.width %>" height="<%= item.height %>"<% } %> loading="<%= index ? 'lazy' : 'eager' %>">
       </a>
       <div class="gallery-meta">
-        <h2><%= item.title ? '《' + item.title + '》' : item.character %></h2>
-        <p><% const credit = item.artist || item.artist_handle; %><% if (item.artist_url) { %><a href="<%= item.artist_url %>" target="_blank" rel="noopener noreferrer"><%= credit || '画师' %> ↗</a><% } else if (credit) { %><%= credit %><% } %><% if (item.series) { %><% if (credit || item.artist_url) { %> · <% } %><%= item.series %><% } %><% if (item.source_url) { %><% if (credit || item.artist_url || item.series) { %> · <% } %><a href="<%= item.source_url %>" target="_blank" rel="noopener noreferrer"><%= artworkSourceLabel(item.platform) %></a><% } %></p>
+        <h2><%= title %></h2>
+        <div class="gallery-byline">
+          <% if (credit || item.artist_url) { %><% if (item.artist_url) { %><a href="<%= item.artist_url %>" target="_blank" rel="noopener noreferrer"><%= credit || '画师主页' %> ↗</a><% } else { %><span><%= credit %></span><% } %><% } %>
+          <% if (item.source_url) { %><a class="gallery-platform" href="<%= item.source_url %>" target="_blank" rel="noopener noreferrer"><%= item.platformLabel || '原作' %> ↗</a><% } else if (item.platformLabel) { %><span class="gallery-platform"><%= item.platformLabel %></span><% } %>
+        </div>
         <% if (item.note) { %><p class="gallery-note"><%= item.note %></p><% } %>
       </div>
     </article>
     <% }); %>
   </div>
   <dialog class="gallery-lightbox" data-gallery-dialog aria-labelledby="gallery-lightbox-title">
-    <button type="button" data-gallery-close aria-label="关闭画廊">✕</button>
-    <div class="gallery-lightbox-stage">
-      <button type="button" data-gallery-prev aria-label="上一张">‹</button>
-      <img data-gallery-image alt="">
-      <button type="button" data-gallery-next aria-label="下一张">›</button>
-    </div>
-    <div class="gallery-lightbox-copy">
-      <h2 id="gallery-lightbox-title" data-gallery-title></h2>
-      <p data-gallery-credit></p>
-      <p class="gallery-lightbox-links"><a data-gallery-source href="" target="_blank" rel="noopener noreferrer">查看原作 ↗</a><a data-gallery-artist href="" target="_blank" rel="noopener noreferrer">画师主页 ↗</a></p>
-      <p data-gallery-note></p>
+    <button type="button" data-gallery-close aria-label="关闭灯箱" autofocus>×</button>
+    <div class="gallery-lightbox-stage"><img data-gallery-image alt="" draggable="false"></div>
+    <div class="gallery-lightbox-bar">
+      <div class="gallery-lightbox-copy">
+        <h2 id="gallery-lightbox-title" data-gallery-title></h2>
+        <p data-gallery-credit></p>
+        <p data-gallery-note></p>
+        <div class="gallery-lightbox-links"><a data-gallery-source target="_blank" rel="noopener noreferrer">查看原作 ↗</a><a data-gallery-artist target="_blank" rel="noopener noreferrer">画师主页 ↗</a></div>
+      </div>
+      <div class="gallery-controls">
+        <button type="button" data-gallery-prev aria-label="上一幅">‹</button>
+        <span data-gallery-index aria-live="polite" aria-atomic="true"></span>
+        <button type="button" data-gallery-next aria-label="下一幅">›</button>
+      </div>
     </div>
   </dialog>
   <script type="application/json" id="gallery-data"><%- JSON.stringify(published).replace(/</g, '\\u003c') %></script>
-  <% } else { %>
-  <p class="empty-state">画廊还空着。喜欢的插画，会一张张收进来。</p>
-  <% } %>
-  <p class="gallery-credit">插画版权归原画师所有。画面及角色与作品官方没有关联，仅作个人欣赏与署名展示。</p>
+  <% } else { %><p class="empty-state">画廊还空着。</p><% } %>
+  <p class="gallery-credit">插画版权归原画师所有，仅作个人收藏展示。</p>
 </section>

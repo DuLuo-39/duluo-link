@@ -1,4 +1,4 @@
-# DuLuo 的小栈
+# DuLuo.
 
 基于 Hexo 8 的中文个人技术博客，使用项目内的 Journal 主题。GitHub 保存源码，Netlify 构建和托管网页，Cloudflare 管理域名 DNS。
 
@@ -19,15 +19,16 @@
 
 首页、文章、关于我、归档、CSS、图标和 sitemap 可访问；不存在的地址返回自定义 404 页面。HTTPS 校验正常，页面 canonical 和 sitemap 使用正式域名。本次核验通过公网及 GitHub 进行，Netlify 后台的仓库关联和自动构建触发设置仍需在控制台确认。
 
-目前包含首页、文章、归档、分类、标签、关于我和 404 页面，以及站内搜索。`source/_posts/hello-world.md` 是明确标注的排版示例；`source/_posts/hexo-github-netlify-cloudflare.md` 是四个平台分工与日常更新流程的建站笔记。
+主导航依次为 **首页、文章、项目、资源、友链、关于**。「文章」进入时间轴，可按年份、分类或标签查找。首页插画的 **Gallery ↗** 通往独立画廊。`source/_posts/hello-world.md` 是明确标注的排版示例；`source/_posts/hexo-github-netlify-cloudflare.md` 是四个平台分工与日常更新流程的建站笔记。
 
 ## 主题与阅读功能
 
-- 粉、紫、冰蓝渐变的个人桌面布局，使用爱弥斯完整插画卡片、玻璃导航和清晰的正文阅读底色。来源与权利信息见 `themes/journal/ASSETS.md` 和网站“关于我”。
-- 首页包含北京时间的分时问候、24 小时时钟、周一开始的当月日历；日期跨日或跨月自动更新，重新回到标签页时立即刷新。问候卡片下方是可配置的社交按钮。
+- 站名、时钟、序号与英文眉标使用自托管的 JetBrains Mono Latin（500 / 700）。中文优先使用本机鸿蒙黑体，其次从 `fonts.googleapis.cn` 按需加载思源黑体 Noto Sans SC 切片，并备有系统黑体回退。
+- 极光底色随插画配色变化。鼠标移动时，三层色斑产生视差，第四枚色团追光，近处的星尘粒子会轻微靠拢并连线。悬浮导航、画廊展框与近白阅读表面共用这片背景。来源与权利信息见 `themes/journal/ASSETS.md` 和网站“关于我”。
+- 首页包含北京时间的分时问候、每秒更新的 `HH:MM:SS` 时钟和周一开始的当月日历。日期跨日或跨月自动更新，重新回到标签页时立即刷新。问候卡片下方是可配置的社交按钮。
 - 右侧可以放一张本地音乐卡片。音频放在 `source/audio/`，单首建议压到 2～4 MB，再在 `themes/journal/_config.yml` 的 `music.tracks` 里登记 `title`、`artist` 和 `src: /audio/文件名.mp3`。列表为空时只显示空态，不会请求音频，也不会自动播放。将 `widgets.music` 设为 `false` 可关掉这张卡片。
 
-新的爱弥斯插画放在 `source/images/gallery/`，建议用 webp 并保留完整构图。然后在 `source/_data/gallery.yml` 的 `items` 里追加一条，写上图片路径、尺寸、标题、画师和 Pixiv 链接。`featured` 不是 `false` 的作品会出现在首页桌面，可以左右切换；无论是否上首页，都会出现在 `/gallery/`。如果这份文件不存在，首页和画廊会回退到主题配置里的 `artwork`。主导航仍是 6 项，画廊从首页插画卡和关于页进入。
+- 画廊依作品比例分栏。多幅作品带有标签且有至少两种来源或标签可选时，顶部可筛选。悬停展框可预览该作配色，打开作品进入全屏灯箱。左右键、底部方向按钮或在画面上左右轻滑可浏览当前筛选结果，`Esc` 关闭。
 - 随机推荐按需加载 `recommendations.json`，只包含已发布文章的标题、链接、日期和简介。多篇文章可切换且不连续重复，单篇隐藏按钮，零篇显示空状态；网络失败仍可阅读构建时显示的文章。
 - 文章自动生成最多三级的目录、阅读时长和阅读进度。桌面目录跟随滚动，手机目录可折叠。
 - 代码块提供高亮、语言标识和复制按钮，复制时保留换行。浏览器拒绝剪贴板访问时，选中代码并提示手动复制。
@@ -35,7 +36,7 @@
 - 站内搜索按需加载 `search.json`，支持中文、标题、正文和标签，多关键词以空格分隔。点击搜索或按 `Ctrl/⌘ K` 打开，按 `Esc` 关闭。
 - 搜索索引只使用 Hexo 发布集合，遵循草稿与未来文章配置，不依赖外部搜索服务。
 
-插画、署名、六个主题配色和五个组件开关集中配置于 `themes/journal/_config.yml`。将 `widgets` 下的对应项设为 `false` 可关闭该组件。桌面采用左侧导航、主视觉及右侧组件，平板收起侧栏，手机改为单列。跟随系统的减少动态效果设置。
+插画、署名、六个主题配色和五个组件开关集中配置于 `themes/journal/_config.yml`。将 `widgets` 下的对应项设为 `false` 可关闭该组件。首页采用顶部浮岛导航和双栏主视觉，窄屏自动改为单列。在系统辅助功能中启用「减少动态效果」后，浏览器会通过 `prefers-reduced-motion` 关闭星尘循环、追光、3D 倾斜和脉冲动画。后台标签页暂停绘制与时钟，回到前台会立即校时。
 
 社交链接写在同一份主题配置的 `socials` 里。关于页的「找到我」、页脚和首页的 GitHub 都读这份列表。GitHub 会优先使用 `key: github` 的 `url`，没有时再回退到 `github_url`。每一项填写 `url` 或 `copy` 之一；两者都留空时自动隐藏。
 
@@ -53,6 +54,29 @@ socials:
 
 `url` 渲染为链接。`mailto:` 在当前页打开，`http` 与 `https` 外链新开页面。只有 `copy` 的项显示文字和复制按钮，不会生成链接。QQ 号这类纯数字请加引号，避免被解析成数字后被隐藏。
 
+## 从 X (Twitter) 收藏并录入插画
+
+1. 在画师的原推打开高清图，保存原始尺寸的图片。转成 WebP 时保留完整构图，将成品放在 `source/images/gallery/`，记录转换后的实际宽高。
+2. 在 `source/_data/gallery.yml` 的 `items:` 下追加一条。下面用占位图名和账号演示格式，录入时换成该画师的署名、真实原推地址和实际尺寸。
+
+```yaml
+  - image: /images/gallery/night-crossing.webp
+    width: 1200
+    height: 1600
+    title: 夜航
+    platform: x
+    artist_handle: '@artist_name'
+    source_url: https://x.com/artist_name/status/1234567890
+    alt: 蓝紫色暮光中的小船与水面倒影
+    tags: ['夜色', '静谧']
+    mood: ['#d9d3eb', '#c5d9e9', '#f2dce4']
+    note: 收藏于暮色渐深时。
+    featured: false
+```
+
+3. 用三个六位十六进制颜色填写 `mood`，颜色值保留引号。X 画师主页可从 `artist_handle` 推导，也可填写 `artist_url`。Pixiv 作品使用 `platform: pixiv`，分别填原作与画师主页地址。
+4. 本地预览 `/gallery/`，检查画面比例、署名、原推链接和灯箱配色。设为 `featured: true` 可加入首页轮播。画廊缺少有效条目时使用主题配置中的 `artwork`。
+
 ## 本地预览
 
 使用 Node.js 24。Windows PowerShell 如果限制执行 `npm.ps1`，将以下命令的 `npm` 写成 `npm.cmd`。
@@ -67,7 +91,7 @@ npm run dev
 ```sh
 npm run build
 npm run check
-node --test tooling/desktop.test.cjs
+node --test tooling/*.test.cjs
 node tooling/check-publishing.cjs
 ```
 
@@ -83,7 +107,7 @@ node tooling/check-publishing.cjs
 | 推荐分享 | `source/_data/share.yml` |
 | 我的项目 | `source/_data/projects.yml` |
 | 优秀博客 | `source/_data/bloggers.yml` |
-| 爱弥斯画廊 | `source/_data/gallery.yml` |
+| 画廊作品、来源、标签与氛围色 | `source/_data/gallery.yml` |
 | 文章 | `source/_posts/*.md` |
 | 页面样式 | `themes/journal/source/css/style.css` |
 | 搜索、代码复制与目录交互 | `themes/journal/source/js/site.js` |
@@ -91,7 +115,7 @@ node tooling/check-publishing.cjs
 | 分类标签生成、搜索索引与阅读时长 | `themes/journal/scripts/reading.js` |
 | 角色与背景素材 | `themes/journal/source/images/` |
 
-主题使用本地字体和资源，未配置第三方统计、评论服务或外部字体请求。当前 Netlify 会为线上页面注入平台工具条脚本，因此线上 HTML 比本地生成文件多出该脚本。
+JetBrains Mono 字体文件与 SIL OFL 1.1 许可随主题发布，见 `themes/journal/source/fonts/NOTICE.txt`。当前 Netlify 会为线上页面注入平台工具条脚本，因此线上 HTML 比本地生成文件多出该脚本。
 
 ## 写文章
 

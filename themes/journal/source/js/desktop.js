@@ -1,11 +1,11 @@
 'use strict';
 
 (() => {
-  const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
   const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
   function beijingTime(now = new Date()) {
     const parts = Object.fromEntries(formatter.formatToParts(now).map(part => [part.type, part.value]));
-    return { year: Number(parts.year), month: Number(parts.month), day: Number(parts.day), hour: Number(parts.hour), minute: parts.minute, weekday: weekdays[new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day))).getUTCDay()] };
+    return { year: Number(parts.year), month: Number(parts.month), day: Number(parts.day), hour: Number(parts.hour), minute: parts.minute, second: parts.second, weekday: weekdays[new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day))).getUTCDay()] };
   }
   function greeting(hour) {
     if (hour < 6) return '夜半微光';
@@ -42,6 +42,8 @@
   if (typeof document === 'undefined') return;
 
   const clock = document.querySelector('[data-clock]');
+  const clockMain = clock?.querySelector('.clock-main');
+  const clockSec = clock?.querySelector('.clock-sec');
   const clockDate = document.querySelector('[data-clock-date]');
   const hello = document.querySelector('[data-greeting]');
   const calendar = document.querySelector('[data-calendar]');
@@ -50,13 +52,14 @@
     const date = beijingTime();
     const dayKey = `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
     if (clock) {
-      clock.textContent = `${String(date.hour).padStart(2, '0')}:${date.minute}`;
-      clock.dateTime = `${dayKey}T${clock.textContent}:00+08:00`;
-      if (clockDate) clockDate.textContent = `${String(date.month).padStart(2, '0')}.${String(date.day).padStart(2, '0')} · 周${date.weekday}`;
+      const main = `${String(date.hour).padStart(2, '0')}:${date.minute}`;
+      if (clockMain.textContent !== main) clockMain.textContent = main;
+      clockSec.textContent = `:${date.second}`;
+      clock.dateTime = `${dayKey}T${main}:${date.second}+08:00`;
+      if (clockDate && renderedDay !== dayKey) clockDate.textContent = `${String(date.month).padStart(2, '0')}.${String(date.day).padStart(2, '0')} · 周${date.weekday}`;
     }
-    if (hello) hello.textContent = greeting(date.hour);
+    if (hello && hello.textContent !== greeting(date.hour)) hello.textContent = greeting(date.hour);
     if (calendar && renderedDay !== dayKey) {
-      renderedDay = dayKey;
       document.querySelector('[data-calendar-title]').textContent = `${date.year} 年 ${date.month} 月`;
       const table = document.createElement('table');
       table.className = 'calendar-table';
@@ -83,11 +86,18 @@
       });
       calendar.replaceChildren(table);
     }
+    renderedDay = dayKey;
   }
   if (clock || calendar || hello) {
-    updateTime();
-    setInterval(() => { if (!document.hidden) updateTime(); }, 15000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) updateTime(); });
+    let timer;
+    function syncTime() {
+      clearInterval(timer);
+      if (document.hidden) return;
+      updateTime();
+      timer = setInterval(updateTime, clock ? 1000 : 15000);
+    }
+    syncTime();
+    document.addEventListener('visibilitychange', syncTime);
   }
 
   const calendarToggle = document.querySelector('[data-calendar-toggle]');
@@ -290,6 +300,7 @@
       });
       document.addEventListener('keydown', event => {
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        if (document.querySelector('dialog[open]')) return;
         if (pieces.length < 2) return;
         const active = document.activeElement;
         if (active && active.closest('input, textarea, select, dialog[open], [contenteditable="true"]')) return;

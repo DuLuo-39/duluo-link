@@ -48,7 +48,7 @@ function normalizeShare(source) {
   for (const item of items) counts.set(item.category, (counts.get(item.category) || 0) + 1);
   return {
     title: text(data.title) || '推荐分享',
-    eyebrow: text(data.eyebrow) || 'RESOURCE WIKI',
+    eyebrow: text(data.eyebrow) || 'RESOURCES',
     description: text(data.description) || '文档与工具。',
     items,
     categories: [...counts.entries()].map(([name, count]) => ({ name, count }))
@@ -113,7 +113,7 @@ hexo.extend.generator.register('journal-portal', function () {
       data: portalPage(data.projects, {
         title: '我的项目',
         eyebrow: 'PROJECTS',
-        description: '作品。'
+        description: ''
       }, normalizeProject)
     },
     {
@@ -122,7 +122,7 @@ hexo.extend.generator.register('journal-portal', function () {
       data: portalPage(data.bloggers, {
         title: '优秀博客',
         eyebrow: 'BLOGROLL',
-        description: '友链。'
+        description: ''
       }, normalizeBlogger)
     },
     { path: 'gallery/index.html', layout: 'gallery', data: normalizeGallery(data.gallery, this.theme.config.artwork) }

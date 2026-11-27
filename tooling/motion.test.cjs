@@ -1,6 +1,21 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { clamp, lerp, tiltAngles, magneticOffset } = require('../themes/journal/source/js/motion.js');
+const { clamp, lerp, tiltAngles, magneticOffset, pointerInfluence } = require('../themes/journal/source/js/motion.js');
+
+test('pointer influence fades from the cursor to the interaction radius', () => {
+  assert.equal(pointerInfluence(0, 170), 1);
+  assert.equal(pointerInfluence(85, 170), 0.5);
+  assert.equal(pointerInfluence(170, 170), 0);
+  assert.equal(pointerInfluence(250, 170), 0);
+});
+
+test('invalid distances and radii exert no influence', () => {
+  for (const invalid of [NaN, Infinity, -Infinity, -1, null, undefined, '12']) {
+    assert.equal(pointerInfluence(invalid, 170), 0);
+    assert.equal(pointerInfluence(0, invalid), 0);
+  }
+  assert.equal(pointerInfluence(0, 0), 0);
+});
 
 test('clamp clips to the closed range and accepts inverted bounds', () => {
   assert.equal(clamp(2, 0, 1), 1);

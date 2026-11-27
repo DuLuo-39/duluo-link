@@ -1,7 +1,6 @@
 # 我的项目。只改这一份列表，重新构建后就会出现在 /projects/。
 title: 我的项目
 eyebrow: PROJECTS
-description: 作品。
 items:
   - name: DuLuo.
     status: 维护中
