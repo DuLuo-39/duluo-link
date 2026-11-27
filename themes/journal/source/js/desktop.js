@@ -12,7 +12,7 @@
     if (hour < 11) return '早上好，今天也要保持好奇';
     if (hour < 14) return '中午好，给自己一点放松时间';
     if (hour < 18) return '下午好，很高兴遇见你';
-    return '晚上好，欢迎来到我的小栈';
+    return '晚上好';
   }
   function calendarDays(year, month) {
     const offset = (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7;
@@ -220,9 +220,12 @@
         source.setAttribute('aria-label', `查看《${item.title || item.character || '插画'}》原作`);
         name.textContent = item.name_en || '';
         character.textContent = item.character || '';
-        series.textContent = item.series || '鸣潮';
+        const seriesWrap = artwork.querySelector('[data-artwork-series-wrap]');
+        if (series) series.textContent = item.series || '';
+        if (seriesWrap) seriesWrap.hidden = !item.series;
         artist.href = item.source_url || item.image;
-        artist.textContent = `Illustration by ${item.artist || ''} ↗`;
+        const credit = item.artist_handle || item.artist || '';
+        artist.textContent = credit ? `Illustration by ${credit} ↗` : '原作 ↗';
         counter.textContent = `${index + 1} / ${count}`;
       }
       artwork.addEventListener('click', event => {

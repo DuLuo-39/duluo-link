@@ -26,11 +26,68 @@ function positiveSize(value) {
   return Number.isFinite(number) && number > 0 ? Math.round(number) : 0;
 }
 
+function galleryHost(value) {
+  const href = galleryHttp(value);
+  if (!href) return '';
+  try {
+    return new URL(href).hostname.toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+function hostPlatform(host) {
+  if (!host) return '';
+  if (host === 'x.com' || host.endsWith('.x.com') || host === 'twitter.com' || host.endsWith('.twitter.com')) return 'x';
+  if (host === 'pixiv.net' || host.endsWith('.pixiv.net')) return 'pixiv';
+  return '';
+}
+
+function artworkPlatform(entry) {
+  const explicit = galleryText(entry.platform).toLowerCase();
+  if (explicit === 'x' || explicit === 'pixiv' || explicit === 'other') return explicit;
+  for (const raw of [entry.source_url, entry.artist_url]) {
+    const found = hostPlatform(galleryHost(raw));
+    if (found) return found;
+  }
+  return 'other';
+}
+
+function artworkHandle(value) {
+  const raw = galleryText(value).replace(/^@+/, '');
+  if (!/^[A-Za-z0-9_]+$/.test(raw)) return '';
+  return `@${raw}`;
+}
+
+function artworkArtistUrl(platform, handle, value) {
+  const explicit = galleryHttp(value);
+  if (explicit) return explicit;
+  if (platform === 'x' && handle) return `https://x.com/${encodeURIComponent(handle.slice(1))}`;
+  return '';
+}
+
+function artworkMood(value) {
+  if (!Array.isArray(value)) return [];
+  const colors = value.flatMap(entry => {
+    const raw = galleryText(entry);
+    return /^#[0-9a-fA-F]{6}$/.test(raw) ? [raw.toLowerCase()] : [];
+  });
+  return colors.length >= 3 ? colors : [];
+}
+
+function sourceLabel(platform) {
+  if (platform === 'x') return 'X 原推 ↗';
+  if (platform === 'pixiv') return 'Pixiv 原作 ↗';
+  return '查看原作 ↗';
+}
+
 function normalizeArtwork(entry) {
   if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
   const image = galleryImage(entry.image);
   if (!image) return null;
   const title = galleryText(entry.title);
+  const platform = artworkPlatform(entry);
+  const artist_handle = artworkHandle(entry.artist_handle);
   return {
     image,
     width: positiveSize(entry.width),
@@ -39,11 +96,14 @@ function normalizeArtwork(entry) {
     character: galleryText(entry.character),
     name_en: galleryText(entry.name_en),
     series: galleryText(entry.series),
+    platform,
     artist: galleryText(entry.artist),
+    artist_handle,
     source_url: galleryHttp(entry.source_url),
-    artist_url: galleryHttp(entry.artist_url),
+    artist_url: artworkArtistUrl(platform, artist_handle, entry.artist_url),
     alt: galleryText(entry.alt) || title,
     featured: entry.featured !== false,
+    mood: artworkMood(entry.mood),
     note: galleryText(entry.note)
   };
 }
@@ -56,10 +116,10 @@ function normalizeGallery(source, fallbackArtwork) {
   });
   const fallback = normalizeArtwork(fallbackArtwork);
   return {
-    title: galleryText(data.title) || '爱弥斯画廊',
-    eyebrow: galleryText(data.eyebrow) || 'AEMEATH GALLERY',
-    description: galleryText(data.description) || '收集喜欢的爱弥斯同人插画，每一张都保留完整构图与画师署名。',
-    items: items.length ? items : (fallback ? [{ ...fallback, featured: true, series: fallback.series || '鸣潮' }] : [])
+    title: galleryText(data.title) || '画廊',
+    eyebrow: galleryText(data.eyebrow) || 'GALLERY',
+    description: galleryText(data.description) || '收集来自 X 与 Pixiv 的光影与线条。',
+    items: items.length ? items : (fallback ? [{ ...fallback, featured: true }] : [])
   };
 }
 
@@ -67,7 +127,7 @@ function featuredArtworks(items, fallbackArtwork) {
   const featured = (Array.isArray(items) ? items : []).filter(item => item && item.image && item.featured !== false);
   if (featured.length) return featured;
   const fallback = normalizeArtwork(fallbackArtwork);
-  return fallback ? [{ ...fallback, featured: true, series: fallback.series || '鸣潮' }] : [];
+  return fallback ? [{ ...fallback, featured: true }] : [];
 }
 
 function galleryStep(current, total, step) {
@@ -108,11 +168,14 @@ if (typeof document !== 'undefined') {
       note.textContent = item.note || '';
       note.hidden = !item.note;
       source.hidden = !item.source_url;
-      if (item.source_url) source.href = item.source_url;
+      if (item.source_url) {
+        source.href = item.source_url;
+        source.textContent = sourceLabel(item.platform);
+      }
       artist.hidden = !item.artist_url;
       if (item.artist_url) {
         artist.href = item.artist_url;
-        artist.textContent = `${item.artist || '画师'} ↗`;
+        artist.textContent = `${item.artist || item.artist_handle || '画师'} ↗`;
       }
       const single = items.length < 2;
       previous.disabled = single;
@@ -130,11 +193,12 @@ if (typeof document !== 'undefined') {
         return;
       }
       if (event.target.closest('[data-gallery-close]')) dialog.close();
-      if (event.target.closest('[data-gallery-prev]')) show(galleryStep(index, items.length, -1));
-      if (event.target.closest('[data-gallery-next]')) show(galleryStep(index, items.length, 1));
+      if (items.length >= 2 && event.target.closest('[data-gallery-prev]')) show(galleryStep(index, items.length, -1));
+      if (items.length >= 2 && event.target.closest('[data-gallery-next]')) show(galleryStep(index, items.length, 1));
       if (event.target === dialog) dialog.close();
     });
     dialog.addEventListener('keydown', event => {
+      if (items.length < 2) return;
       if (event.key === 'ArrowLeft') { event.preventDefault(); show(galleryStep(index, items.length, -1)); }
       if (event.key === 'ArrowRight') { event.preventDefault(); show(galleryStep(index, items.length, 1)); }
     });

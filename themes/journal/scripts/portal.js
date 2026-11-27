@@ -49,7 +49,7 @@ function normalizeShare(source) {
   return {
     title: text(data.title) || '推荐分享',
     eyebrow: text(data.eyebrow) || 'RESOURCE WIKI',
-    description: text(data.description) || '收藏平时高频使用的文档、工具与灵感来源。',
+    description: text(data.description) || '文档与工具。',
     items,
     categories: [...counts.entries()].map(([name, count]) => ({ name, count }))
   };
@@ -113,7 +113,7 @@ hexo.extend.generator.register('journal-portal', function () {
       data: portalPage(data.projects, {
         title: '我的项目',
         eyebrow: 'PROJECTS',
-        description: '亲手写下的小作品与持续维护中的折腾记录。'
+        description: '作品。'
       }, normalizeProject)
     },
     {
@@ -122,7 +122,7 @@ hexo.extend.generator.register('journal-portal', function () {
       data: portalPage(data.bloggers, {
         title: '优秀博客',
         eyebrow: 'BLOGROLL',
-        description: '值得反复翻阅的独立博客与灵感站点。'
+        description: '友链。'
       }, normalizeBlogger)
     },
     { path: 'gallery/index.html', layout: 'gallery', data: normalizeGallery(data.gallery, this.theme.config.artwork) }

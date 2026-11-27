@@ -39,7 +39,7 @@ const yaml = require('js-yaml');
   assert.match(read('projects/index.html'), /项目还在路上/);
   assert.match(read('bloggers/index.html'), /<h1>优秀博客<\/h1>/);
   assert.match(read('bloggers/index.html'), /还没有收录博客/);
-  assert.match(read('gallery/index.html'), /<h1>爱弥斯画廊<\/h1>/);
+  assert.match(read('gallery/index.html'), /<h1>画廊<\/h1>/);
   assert.match(read('gallery/index.html'), /aemeath\.webp/);
   fs.writeFileSync(path.join(source, '_posts', 'published.md'), '---\ntitle: "中文 <test> 与 C++"\ndate: 2020-01-01\ncategories: [Parent, Child]\ntags: [Hexo, 中文]\n---\n## 第一节\n公开内容\n\n```js\nconst a = 1;\nconst b = 2;\n```\n');
   fs.writeFileSync(path.join(source, '_posts', 'future.md'), '---\ntitle: Future private sentinel\ndate: 2099-01-01\ntags: [hidden-future]\n---\nFUTURE_SECRET_SENTINEL\n');

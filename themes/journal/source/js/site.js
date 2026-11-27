@@ -37,7 +37,7 @@
       results.replaceChildren();
       retry.hidden = true;
       if (!query) {
-        status.textContent = '输入关键词，找回那些灵光一闪。';
+        status.textContent = '键入关键词…';
         return;
       }
       status.textContent = '正在寻找…';

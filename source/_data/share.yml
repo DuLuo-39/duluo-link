@@ -1,7 +1,7 @@
 # 推荐分享。只改这一份列表，重新构建后就会出现在 /share/。
 title: 推荐分享
 eyebrow: RESOURCE WIKI
-description: 收藏平时高频使用的文档、工具与灵感来源。
+description: 文档与工具。
 items:
   - name: Hexo 官方文档
     url: https://hexo.io/zh-cn/docs/
@@ -10,7 +10,7 @@ items:
     tags:
       - 博客
       - 静态站点
-    summary: 这个小栈用的静态博客框架。模板、数据文件、永久链接和部署都从这里查。
+    summary: 本站用的静态博客框架。模板、数据文件、永久链接和部署都从这里查。
   - name: MDN Web Docs
     url: https://developer.mozilla.org/zh-CN/docs/Web
     category: 开发文档

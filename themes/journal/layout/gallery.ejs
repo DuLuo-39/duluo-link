@@ -1,9 +1,10 @@
 <% const items = Array.isArray(page.items) ? page.items : []; %>
-<% const published = items.map(item => ({ title: item.title, character: item.character, name_en: item.name_en, series: item.series, artist: item.artist, source_url: item.source_url, artist_url: item.artist_url, alt: item.alt, note: item.note, width: item.width, height: item.height, image: /^https?:\/\//i.test(item.image) ? item.image : url_for(item.image) })); %>
+<% function artworkSourceLabel(platform) { return platform === 'x' ? 'X 原推 ↗' : (platform === 'pixiv' ? 'Pixiv 原作 ↗' : '查看原作 ↗'); } %>
+<% const published = items.map(item => ({ title: item.title, character: item.character, name_en: item.name_en, series: item.series, artist: item.artist, artist_handle: item.artist_handle, platform: item.platform, mood: item.mood, source_url: item.source_url, artist_url: item.artist_url, alt: item.alt, note: item.note, width: item.width, height: item.height, image: /^https?:\/\//i.test(item.image) ? item.image : url_for(item.image) })); %>
 <section class="gallery-page" data-gallery-page>
   <header class="archive-header">
-    <p class="eyebrow"><%= page.eyebrow || 'AEMEATH GALLERY' %></p>
-    <h1><%= page.title || '爱弥斯画廊' %></h1>
+    <p class="eyebrow"><%= page.eyebrow || 'GALLERY' %></p>
+    <h1><%= page.title || '画廊' %></h1>
     <% if (page.description) { %><p><%= page.description %></p><% } %>
     <p class="gallery-count">共 <%= published.length %> 张</p>
   </header>
@@ -16,7 +17,7 @@
       </a>
       <div class="gallery-meta">
         <h2><%= item.title ? '《' + item.title + '》' : item.character %></h2>
-        <p><% if (item.artist_url) { %><a href="<%= item.artist_url %>" target="_blank" rel="noopener noreferrer"><%= item.artist || '画师' %> ↗</a><% } else { %><%= item.artist %><% } %><% if (item.series) { %> · <%= item.series %><% } %></p>
+        <p><% const credit = item.artist || item.artist_handle; %><% if (item.artist_url) { %><a href="<%= item.artist_url %>" target="_blank" rel="noopener noreferrer"><%= credit || '画师' %> ↗</a><% } else if (credit) { %><%= credit %><% } %><% if (item.series) { %><% if (credit || item.artist_url) { %> · <% } %><%= item.series %><% } %><% if (item.source_url) { %><% if (credit || item.artist_url || item.series) { %> · <% } %><a href="<%= item.source_url %>" target="_blank" rel="noopener noreferrer"><%= artworkSourceLabel(item.platform) %></a><% } %></p>
         <% if (item.note) { %><p class="gallery-note"><%= item.note %></p><% } %>
       </div>
     </article>
@@ -32,7 +33,7 @@
     <div class="gallery-lightbox-copy">
       <h2 id="gallery-lightbox-title" data-gallery-title></h2>
       <p data-gallery-credit></p>
-      <p class="gallery-lightbox-links"><a data-gallery-source href="" target="_blank" rel="noopener noreferrer">在 Pixiv 查看原作 ↗</a><a data-gallery-artist href="" target="_blank" rel="noopener noreferrer">画师主页 ↗</a></p>
+      <p class="gallery-lightbox-links"><a data-gallery-source href="" target="_blank" rel="noopener noreferrer">查看原作 ↗</a><a data-gallery-artist href="" target="_blank" rel="noopener noreferrer">画师主页 ↗</a></p>
       <p data-gallery-note></p>
     </div>
   </dialog>

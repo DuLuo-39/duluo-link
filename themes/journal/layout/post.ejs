@@ -1,8 +1,8 @@
 <div class="reading-layout">
   <article class="article post-article">
-    <header class="article-header"><a class="back-link" href="<%= url_for('/') %>">← 回到小栈</a><div class="post-meta"><% page.categories.each(function(category) { %><a class="category-label" href="<%= url_for(category.path) %>"><%= category.name %></a><% }); %><time datetime="<%= date(page.date, 'YYYY-MM-DD') %>"><%= date(page.date, 'YYYY.MM.DD') %></time><span>约 <%= reading_minutes(page) %> 分钟</span></div><h1><%= page.title %></h1><% if (page.description) { %><p class="article-description"><%= page.description %></p><% } %></header>
+    <header class="article-header"><a class="back-link" href="<%= url_for('/') %>">← 返回</a><div class="post-meta"><% page.categories.each(function(category) { %><a class="category-label" href="<%= url_for(category.path) %>"><%= category.name %></a><% }); %><time datetime="<%= date(page.date, 'YYYY-MM-DD') %>"><%= date(page.date, 'YYYY.MM.DD') %></time><span>约 <%= reading_minutes(page) %> 分钟</span></div><h1><%= page.title %></h1><% if (page.description) { %><p class="article-description"><%= page.description %></p><% } %></header>
     <div class="prose" data-article-content><%- page.content %></div>
-    <footer class="article-bottom"><div class="tag-list"><% page.tags.each(function(tag) { %><a href="<%= url_for(tag.path) %>"># <%= tag.name %></a><% }); %></div><p>写到这里，感谢相遇。<span aria-hidden="true">✦</span></p></footer>
+    <footer class="article-bottom"><div class="tag-list"><% page.tags.each(function(tag) { %><a href="<%= url_for(tag.path) %>"># <%= tag.name %></a><% }); %></div></footer>
     <% if (page.prev || page.next) { %><nav class="post-navigation" aria-label="相邻文章"><% if (page.prev) { %><a href="<%= url_for(page.prev.path) %>"><span>← 较新一篇</span><strong><%= page.prev.title %></strong></a><% } %><% if (page.next) { %><a href="<%= url_for(page.next.path) %>"><span>较早一篇 →</span><strong><%= page.next.title %></strong></a><% } %></nav><% } %>
   </article>
   <% const contents = toc(page.content, { list_number: false, max_depth: 3 }); %>

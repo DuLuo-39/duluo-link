@@ -1,7 +1,27 @@
-# 爱弥斯画廊。新图放进 source/images/gallery/，再在 items 里追加一条。
-title: 爱弥斯画廊
-eyebrow: AEMEATH GALLERY
-description: 收集喜欢的爱弥斯同人插画，每一张都保留完整构图与画师署名。
+# 画廊。新图放进 source/images/gallery/，再在 items 里追加一条。
+# platform 可写 x / pixiv / other；省略时按 source_url 或 artist_url 的主机名推断。
+# X (Twitter) 插画录入示例（整段复制到 items 下，去掉行首 # 后按实际作品改）：
+# - image: /images/gallery/example.webp
+#   width: 1200
+#   height: 1600
+#   title: 夜航
+#   character: ''
+#   name_en: ''
+#   series: ''
+#   platform: x
+#   artist: ''
+#   artist_handle: '@handle' # 未填 artist_url 时推导为 https://x.com/handle
+#   source_url: https://x.com/handle/status/1234567890
+#   alt: 一幅来自 X 的插画
+#   featured: false
+#   mood:
+#     - '#1b1a2e'
+#     - '#c9b4e0'
+#     - '#f4eef8'
+#   note: ''
+title: 画廊
+eyebrow: GALLERY
+description: 收集来自 X 与 Pixiv 的光影与线条。
 items:
   - image: /images/aemeath.webp
     width: 962
@@ -10,9 +30,15 @@ items:
     character: 爱弥斯
     name_en: AEMEATH
     series: 鸣潮
+    platform: pixiv # 支持 x / pixiv / other，可省略由 source_url 自动推断
     artist: / /
+    artist_handle: '' # X 画师可填 '@handle'，未填 artist_url 时自动推导 https://x.com/handle
     source_url: https://www.pixiv.net/artworks/141188192
     artist_url: https://www.pixiv.net/users/90015209
     alt: 爱弥斯闭眼轻笑的完整插画《o_<》
     featured: true
-    note: 闭眼轻笑的瞬间，也是这间小栈最初的桌面风景。
+    mood:
+      - '#f6dfeb'
+      - '#e9e2f7'
+      - '#ddedf7'
+    note: 最初的桌面风景。

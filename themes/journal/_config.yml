@@ -1,7 +1,7 @@
-eyebrow: DULUO'S NOTEBOOK
-hero_title: 代码、日常，还有热爱。
-hero_description: 写一点代码，存一些想法。<br>在这里，慢慢收集生活的闪光。
-footer_note: 保持好奇，下一页见。
+eyebrow: DULUO.LINK
+hero_title: ''
+hero_description: ''
+footer_note: duluo.link
 github_url: https://github.com/DuLuo-39
 
 # url 渲染为链接；只有 copy 的项显示为可复制文本。两者都留空则不显示。
@@ -32,6 +32,11 @@ artwork:
   name_en: AEMEATH
   title: o_<
   artist: / /
+  platform: pixiv
+  mood:
+    - '#f6dfeb'
+    - '#e9e2f7'
+    - '#ddedf7'
   source_url: https://www.pixiv.net/artworks/141188192
   artist_url: https://www.pixiv.net/users/90015209
 

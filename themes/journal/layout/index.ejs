@@ -12,15 +12,15 @@
         <% if (arts.length > 1) { %><div class="artwork-switch"><button type="button" data-artwork-prev aria-label="上一张">‹</button><span data-artwork-index>1 / <%= arts.length %></span><button type="button" data-artwork-next aria-label="下一张">›</button></div><% } %>
         <a class="artwork-gallery-link" href="<%= url_for('/gallery/') %>">画廊 ↗</a>
       </div>
-      <figcaption><span><span class="artwork-dot" aria-hidden="true"></span><span data-artwork-character><%= art.character %></span> <small>· <span data-artwork-series><%= art.series || '鸣潮' %></span></small></span><a data-artwork-artist href="<%= art.source_url || art.image %>" target="_blank" rel="noopener noreferrer">Illustration by <%= art.artist %> ↗</a></figcaption>
+      <figcaption><span><span class="artwork-dot" aria-hidden="true"></span><span data-artwork-character><%= art.character %></span><small data-artwork-series-wrap<% if (!art.series) { %> hidden<% } %>> · <span data-artwork-series><%= art.series || '' %></span></small></span><a data-artwork-artist href="<%= art.source_url || art.image %>" target="_blank" rel="noopener noreferrer"><%= (art.artist_handle || art.artist) ? ('Illustration by ' + (art.artist_handle || art.artist) + ' ↗') : '原作 ↗' %></a></figcaption>
       <% if (arts.length > 1) { %><script type="application/json" data-artwork-data><%- JSON.stringify(arts).replace(/</g, '\\u003c') %></script><% } %>
     </figure>
     <% } %>
     <div class="greeting-card glass">
       <p class="greeting-kicker"><span aria-hidden="true">✧</span> <span<%- widgets.greeting !== false ? ' data-greeting' : '' %>>很高兴遇见你</span></p>
       <h1 id="welcome-title">嗨，我是 <span><%= config.author %></span><i aria-hidden="true">.</i></h1>
-      <p class="welcome-subtitle"><%= theme.hero_title %></p>
-      <p class="greeting-description"><%- theme.hero_description %></p>
+      <% if (theme.hero_title) { %><p class="welcome-subtitle"><%= theme.hero_title %></p><% } %>
+      <% if (theme.hero_description) { %><p class="greeting-description"><%- theme.hero_description %></p><% } %>
       <div class="welcome-actions"><a class="primary-link" href="#recent-title">开始阅读 <span aria-hidden="true">↓</span></a><% const githubHref = journal_github_url(); if (githubHref) { %><a class="quiet-link" href="<%= githubHref %>" target="_blank" rel="noopener noreferrer">GitHub ↗</a><% } %></div>
       <%- journal_social_bar() %>
       <span class="greeting-star" aria-hidden="true">✧</span>
