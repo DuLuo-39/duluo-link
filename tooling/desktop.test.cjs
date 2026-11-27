@@ -1,6 +1,28 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { beijingTime, greeting, calendarDays, pickPost, formatDuration, nextTrackIndex } = require('../themes/journal/source/js/desktop.js');
+const { beijingTime, greeting, calendarDays, pickPost, formatDuration, nextTrackIndex, normalizeVolume, parseStoredMood } = require('../themes/journal/source/js/desktop.js');
+
+test('volume accepts stored decimals, clips to the unit interval and preserves zero', () => {
+  for (const [value, expected] of [[0, 0], ['0.32', 0.32], [-0.2, 0], [1.5, 1], ['1', 1]]) {
+    assert.equal(normalizeVolume(value), expected);
+  }
+});
+test('missing and malformed volume settings use the supplied or default level', () => {
+  for (const value of [null, undefined, '', '  ', '70%', [], false, NaN, Infinity]) {
+    assert.equal(normalizeVolume(value), 0.7);
+    assert.equal(normalizeVolume(value, 0.4), 0.4);
+  }
+});
+test('stored moods preserve three six-digit colors in palette order', () => {
+  const colors = ['#cbe9ff', '#D5F2F4', '#fce0ea'];
+  assert.deepEqual(parseStoredMood(JSON.stringify(colors)), colors);
+});
+test('malformed, incomplete and non-hex stored palettes are rejected as a whole', () => {
+  for (const raw of [null, 'oops', 'null', '{}', '[]', '["#abc123","#123abc"]',
+    '["#abcdef","#123456","#aabbcc","#ffffff"]', ...['red','#fff','#12345g','#12345678',42,['#aabbcc']].map(value => JSON.stringify(['#abcdef','#123456',value]))]) {
+    assert.equal(parseStoredMood(raw), null);
+  }
+});
 
 test('Beijing time rolls over at UTC 16:00, including month and year boundaries', () => {
   assert.deepEqual(beijingTime(new Date('2026-12-31T15:59:59Z')), { year:2026, month:12, day:31, hour:23, minute:'59', second:'59', weekday:'四' });

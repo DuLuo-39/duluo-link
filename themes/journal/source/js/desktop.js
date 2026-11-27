@@ -37,9 +37,29 @@
     const delta = Number.isFinite(Number(step)) ? Math.trunc(Number(step)) : 0;
     return ((index + delta) % count + count) % count;
   }
-  // Export the date and selection logic for boundary tests without a browser clock override.
-  if (typeof module === 'object' && module.exports) module.exports = { beijingTime, greeting, calendarDays, pickPost, formatDuration, nextTrackIndex };
+  function normalizeVolume(value, fallback = 0.7) {
+    if (typeof value !== 'number' && (typeof value !== 'string' || !value.trim())) return fallback;
+    const number = Number(value);
+    return Number.isFinite(number) ? Math.min(1, Math.max(0, number)) : fallback;
+  }
+
+  function parseStoredMood(raw) {
+    if (typeof raw !== 'string') return null;
+    try {
+      const colors = JSON.parse(raw);
+      return Array.isArray(colors) && colors.length === 3 && colors.every(color => typeof color === 'string' && /^#[\da-f]{6}$/i.test(color)) ? colors : null;
+    } catch { return null; }
+  }
+
+  if (typeof module === 'object' && module.exports) module.exports = { beijingTime, greeting, calendarDays, pickPost, formatDuration, nextTrackIndex, normalizeVolume, parseStoredMood };
   if (typeof document === 'undefined') return;
+
+  function readPreference(key) {
+    try { return localStorage.getItem(key); } catch { return null; }
+  }
+  function writePreference(key, value) {
+    try { localStorage.setItem(key, value); } catch { /* Controls still work for this visit. */ }
+  }
 
   const clock = document.querySelector('[data-clock]');
   const clockMain = clock?.querySelector('.clock-main');
@@ -56,7 +76,14 @@
       if (clockMain.textContent !== main) clockMain.textContent = main;
       clockSec.textContent = `:${date.second}`;
       clock.dateTime = `${dayKey}T${main}:${date.second}+08:00`;
-      if (clockDate && renderedDay !== dayKey) clockDate.textContent = `${String(date.month).padStart(2, '0')}.${String(date.day).padStart(2, '0')} · 周${date.weekday}`;
+      if (clockDate && renderedDay !== dayKey) {
+        clockDate.textContent = `${String(date.month).padStart(2, '0')}.${String(date.day).padStart(2, '0')}`;
+        const clockWeek = document.querySelector('[data-clock-week]');
+        if (clockWeek) {
+          clockWeek.hidden = false;
+          clockWeek.textContent = `周${date.weekday}`;
+        }
+      }
     }
     if (hello && hello.textContent !== greeting(date.hour)) hello.textContent = greeting(date.hour);
     if (calendar && renderedDay !== dayKey) {
@@ -172,6 +199,31 @@
       const currentTime = player.querySelector('[data-music-current]');
       const totalTime = player.querySelector('[data-music-duration]');
       const error = player.querySelector('[data-music-error]');
+      const volume = player.querySelector('[data-music-volume]');
+      const mute = player.querySelector('[data-music-mute]');
+      let lastVolume = normalizeVolume(readPreference('duluo:music-volume'));
+      const initiallyMuted = readPreference('duluo:music-muted') === 'true' || lastVolume === 0;
+      if (!lastVolume) lastVolume = 0.7;
+
+      function setMuted(muted, persist) {
+        audio.muted = muted;
+        audio.volume = muted ? 0 : lastVolume;
+        volume.value = String(Math.round(audio.volume * 100));
+        volume.setAttribute('aria-valuetext', volume.value + '%');
+        mute.setAttribute('aria-pressed', String(muted));
+        mute.setAttribute('aria-label', muted ? '取消静音' : '静音');
+        if (persist) {
+          writePreference('duluo:music-volume', String(lastVolume));
+          writePreference('duluo:music-muted', String(muted));
+        }
+      }
+      setMuted(initiallyMuted, false);
+      mute.addEventListener('click', () => setMuted(!audio.muted, true));
+      volume.addEventListener('input', () => {
+        const level = normalizeVolume(volume.valueAsNumber / 100);
+        if (level > 0) lastVolume = level;
+        setMuted(level === 0, true);
+      });
       let seeking = false;
       function setPlaying(playing) {
         toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
@@ -183,6 +235,11 @@
         if (error) error.hidden = false;
         setPlaying(false);
       }
+      function play() {
+        audio.play().catch(error => { if (error.name !== 'AbortError') showError(); });
+      }
+      audio.addEventListener('playing', () => setPlaying(true));
+      audio.addEventListener('pause', () => setPlaying(false));
       function showTrack(nextIndex, shouldPlay) {
         index = nextTrackIndex(nextIndex, tracks.length, 0);
         const track = tracks[index];
@@ -194,10 +251,10 @@
         totalTime.textContent = '00:00';
         audio.src = track.src;
         if (!shouldPlay) { setPlaying(false); return; }
-        audio.play().then(() => setPlaying(true)).catch(showError);
+        play();
       }
       toggle.addEventListener('click', () => {
-        if (audio.paused) audio.play().then(() => setPlaying(true)).catch(showError);
+        if (audio.paused) play();
         else { audio.pause(); setPlaying(false); }
       });
       previous.addEventListener('click', () => { if (!previous.disabled) showTrack(nextTrackIndex(index, tracks.length, -1), !audio.paused); });
@@ -226,87 +283,108 @@
 
   const moodFallbacks = ['#f6dfeb', '#e9e2f7', '#ddedf7'];
   function paintMood(mood) {
-    const colors = Array.isArray(mood) ? mood : [];
-    const root = document.documentElement;
-    [0, 1, 2].forEach(slot => {
-      const value = typeof colors[slot] === 'string' ? colors[slot].trim() : '';
-      root.style.setProperty(`--mood-${slot + 1}`, /^#[\da-f]{6}$/i.test(value) ? value : moodFallbacks[slot]);
-    });
+    const colors = mood?.length >= 3 ? mood.slice(0, 3) : moodFallbacks;
+    colors.forEach((color, slot) => document.documentElement.style.setProperty(`--mood-${slot + 1}`, color));
+    return colors;
   }
+
   const artwork = document.querySelector('[data-artwork]');
-  if (artwork) {
-    let pieces = [];
-    try { pieces = JSON.parse((artwork.querySelector('[data-artwork-data]') || {}).textContent || '[]'); }
-    catch { pieces = []; }
-    if (pieces[0]) paintMood(pieces[0].mood);
-    if (artwork.hasAttribute('data-artwork-switch') && pieces.length > 1) {
-      let index = 0;
-      const image = artwork.querySelector('[data-artwork-image]');
-      const source = artwork.querySelector('[data-artwork-source]');
-      const title = artwork.querySelector('[data-artwork-title]');
-      const character = artwork.querySelector('[data-artwork-character]');
-      const series = artwork.querySelector('[data-artwork-series]');
-      const seriesWrap = artwork.querySelector('[data-artwork-series-wrap]');
-      const artist = artwork.querySelector('[data-artwork-artist]');
-      const counter = artwork.querySelector('[data-artwork-index]');
-      const pad = value => String(value).padStart(2, '0');
-      let fadeId = 0;
-      function showArtwork(nextIndex) {
-        const count = pieces.length;
-        if (count < 2 || !image) return;
-        index = ((nextIndex % count) + count) % count;
-        const item = pieces[index];
-        const render = () => {
-          image.src = item.image;
-          image.alt = item.alt || item.title || '';
-          if (item.width) image.width = item.width;
-          if (item.height) image.height = item.height;
-          source.href = item.source_url || item.image;
-          source.setAttribute('aria-label', `查看《${item.title || item.character || '插画'}》原作`);
-          if (title) title.textContent = item.title ? `《${item.title}》` : (item.character || '插画');
-          if (character) character.textContent = item.character || '';
-          if (series) series.textContent = item.series || '';
-          if (seriesWrap) seriesWrap.hidden = !item.series;
-          const credit = item.artist_handle || item.artist || '';
-          artist.href = item.artist_url || item.source_url || item.image;
-          artist.textContent = credit ? `${credit} ↗` : '原作 ↗';
-          if (counter) counter.textContent = `${pad(index + 1)} / ${pad(count)}`;
-          paintMood(item.mood);
-        };
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce) { render(); return; }
-        const id = ++fadeId;
-        let settled = false;
-        const finish = () => {
-          if (settled) return;
-          settled = true;
-          image.removeEventListener('transitionend', onEnd);
-          if (id !== fadeId) return;
-          render();
-          image.classList.remove('is-leaving');
-        };
-        const onEnd = event => {
-          if (event.target === image && (event.propertyName === 'opacity' || event.propertyName === 'transform')) finish();
-        };
-        image.addEventListener('transitionend', onEnd);
-        image.classList.remove('is-leaving');
-        void image.offsetWidth;
-        image.classList.add('is-leaving');
-        setTimeout(finish, 360);
-      }
-      artwork.addEventListener('click', event => {
-        if (event.target.closest('[data-artwork-prev]')) showArtwork(index - 1);
-        if (event.target.closest('[data-artwork-next]')) showArtwork(index + 1);
-      });
-      document.addEventListener('keydown', event => {
-        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-        if (document.querySelector('dialog[open]')) return;
-        if (pieces.length < 2) return;
-        const active = document.activeElement;
-        if (active && active.closest('input, textarea, select, dialog[open], [contenteditable="true"]')) return;
-        event.preventDefault();
-        showArtwork(index + (event.key === 'ArrowRight' ? 1 : -1));
-      });
+  if (!artwork) return;
+  let pieces;
+  try { pieces = JSON.parse(artwork.querySelector('[data-artwork-data]')?.textContent || '[]'); }
+  catch { return; }
+  if (!Array.isArray(pieces) || !pieces.length) return;
+  const image = artwork.querySelector('[data-artwork-image]');
+  const source = artwork.querySelector('[data-artwork-source]');
+  const title = artwork.querySelector('[data-artwork-title]');
+  const character = artwork.querySelector('[data-artwork-character]');
+  const series = artwork.querySelector('[data-artwork-series]');
+  const seriesWrap = artwork.querySelector('[data-artwork-series-wrap]');
+  const artist = artwork.querySelector('[data-artwork-artist]');
+  const counter = artwork.querySelector('[data-artwork-index]');
+  const pad = value => String(value).padStart(2, '0');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let index = 0;
+  let fadeId = 0;
+
+  function showArtwork(at, interactive) {
+    index = at;
+    const item = pieces[index];
+    const id = ++fadeId;
+    if (!item || !image) return;
+    image.classList.remove('is-entering');
+    image.src = item.image;
+    image.alt = item.alt || item.title || '';
+    for (const dimension of ['width', 'height']) {
+      if (item[dimension]) image.setAttribute(dimension, item[dimension]);
+      else image.removeAttribute(dimension);
+    }
+    if (source) {
+      source.href = item.source_url || item.image;
+      source.setAttribute('aria-label', `查看《${item.title || item.character || '插画'}》原作`);
+    }
+    if (title) title.textContent = item.title ? `《${item.title}》` : (item.character || '插画');
+    if (character) character.textContent = item.character || '';
+    if (series) series.textContent = item.series || '';
+    if (seriesWrap) seriesWrap.hidden = !item.series;
+    if (artist) {
+      const credit = item.artist_handle || item.artist || '';
+      artist.href = item.artist_url || item.source_url || item.image;
+      artist.textContent = credit ? `${credit} ↗` : '原作 ↗';
+    }
+    if (counter) counter.textContent = pieces.length > 1 ? `${pad(index + 1)} / ${pad(pieces.length)}` : '01';
+    const colors = paintMood(item.mood);
+
+    if (!interactive) return;
+    writePreference('duluo:artwork-index', item.image);
+    writePreference('duluo:mood', JSON.stringify(colors));
+    if (reducedMotion.matches) return;
+    image.classList.remove('is-entering');
+    void image.offsetWidth;
+    if (id !== fadeId) return;
+    image.classList.add('is-entering');
+    setTimeout(() => { if (id === fadeId) image.classList.remove('is-entering'); }, 150);
+  }
+
+  function restoreArtwork() {
+    const savedImage = readPreference('duluo:artwork-index');
+    const savedIndex = pieces.findIndex(item => item.image === savedImage);
+    if (savedIndex >= 0) showArtwork(savedIndex, false);
+    else if (!readJournalMood()) paintMood(pieces[0].mood);
+  }
+  restoreArtwork();
+  window.addEventListener('pageshow', event => { if (event.persisted) restoreArtwork(); });
+  if (pieces.length < 2) return;
+
+  function preloadOthers() {
+    const images = new Set(pieces.map(item => item.image));
+    images.delete(pieces[index].image);
+    for (const path of images) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.fetchPriority = 'low';
+      img.src = path;
     }
   }
+  function schedulePreload() {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(preloadOthers, { timeout:2000 });
+    else setTimeout(preloadOthers, 600);
+  }
+  if (document.readyState === 'complete') schedulePreload();
+  else window.addEventListener('load', schedulePreload, { once:true });
+
+  function stepArtwork(step) {
+    showArtwork(nextTrackIndex(index, pieces.length, step), true);
+  }
+  artwork.addEventListener('click', event => {
+    if (event.target.closest('[data-artwork-prev]')) stepArtwork(-1);
+    if (event.target.closest('[data-artwork-next]')) stepArtwork(1);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    if (document.querySelector('dialog[open]')) return;
+    if (document.activeElement?.closest('input, textarea, select, [contenteditable="true"]')) return;
+    event.preventDefault();
+    stepArtwork(event.key === 'ArrowRight' ? 1 : -1);
+  });
 })();

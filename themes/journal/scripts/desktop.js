@@ -1,6 +1,9 @@
 'use strict';
 
 const defaults = { accent: '#78619c', ink: '#39364b', muted: '#726b83', pink: '#f6dfeb', lavender: '#e9e2f7', blue: '#ddedf7' };
+// Inline the same validated parser in every page before the body is painted.
+const { parseStoredMood } = require('../source/js/desktop.js');
+hexo.extend.helper.register('journal_mood_parser', () => parseStoredMood.toString());
 hexo.extend.helper.register('desktop_palette', function () {
   return Object.entries(defaults).map(([key, fallback]) => {
     const value = this.theme.palette?.[key];

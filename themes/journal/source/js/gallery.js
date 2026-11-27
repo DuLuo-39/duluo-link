@@ -157,9 +157,10 @@ function initGallery(page) {
 
   function setMood(item) {
     const style = document.documentElement.style;
+    const colors = item?.mood?.length >= 3 ? item.mood : (typeof readJournalMood === 'function' ? readJournalMood() : null);
     for (let slot = 0; slot < 3; slot++) {
       const key = `--mood-${slot + 1}`;
-      if (item?.mood[slot]) style.setProperty(key, item.mood[slot]);
+      if (colors) style.setProperty(key, colors[slot]);
       else style.removeProperty(key);
     }
   }

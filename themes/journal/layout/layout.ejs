@@ -25,6 +25,16 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.cn/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;display=swap"></noscript>
   <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
   <style>:root{<%- desktop_palette() %>}</style>
+  <script>
+    function readJournalMood() {
+      try { return (<%- journal_mood_parser() %>)(localStorage.getItem('duluo:mood')); } catch { return null; }
+    }
+    function restoreJournalMood() {
+      readJournalMood()?.forEach((color, i) => document.documentElement.style.setProperty('--mood-' + (i + 1), color));
+    }
+    restoreJournalMood();
+    window.addEventListener('pageshow', event => { if (event.persisted) restoreJournalMood(); });
+  </script>
   <script src="<%= url_for('/js/site.js') %>" defer></script>
   <script src="<%= url_for('/js/motion.js') %>" defer></script>
   <% if (is_home()) { %><script src="<%= url_for('/js/desktop.js') %>" defer></script><% } %>
